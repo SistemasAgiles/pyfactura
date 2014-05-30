@@ -54,7 +54,7 @@ with gui.Window(name='mywin',
                         value=u'20-26756539-3', )
             gui.Label(name='label_268_164', height='31', left='316', 
                       top='22', width='61', text=u'Nombre:', )
-            gui.TextBox(name='textbox_400_158_1018', height='27', 
+            gui.TextBox(name='textbox_400_158_1018', 
                         left='383', top='17', width='240', 
                         value=u'Mariano Reingart', )
             gui.Label(name='label_322_165', left='10', top='50', 
@@ -94,6 +94,33 @@ with gui.Window(name='mywin',
         gui.TextBox(id=290, mask='date', name='textbox_290', left='517', top='125', 
                     width='122', 
                     value=datetime.date(2014, 5, 27), )
+        with gui.Panel(label=u'Conceptos a incluir', name='panel_403', 
+                       height='89', left='8', top='157', width='265', 
+                       image='', ):
+            gui.CheckBox(label=u'Productos', name='checkbox_32_32', left='13', 
+                         top='24', width='99', 
+                         )
+            gui.CheckBox(label=u'Servicios', name='checkbox_180_32', left='12', 
+                         top='49', width='110', 
+                         )
+        with gui.Panel(label=u'Per\xedodo Facturado', name='panel_404', 
+                       height='89', left='276', top='158', width='363', 
+                       image='', ):
+            gui.Label(name='label_272_30_1442_1458', height='17', 
+                      left='17', top='25', width='49', text=u'Desde:', )
+            gui.Label(name='label_272_30', left='192', top='25', width='49', 
+                      text=u'Hasta:', )
+            gui.TextBox(id=998, mask='date', name='textbox_306_31_486_998', 
+                        left='72', top='20', width='113', 
+                        value=datetime.date(2014, 5, 28), )
+            gui.TextBox(mask='date', name='textbox_306_31', left='240', top='20', 
+                        width='113', 
+                        value=datetime.date(2014, 5, 28), )
+            gui.Label(name='label_272_30_1442', height='17', left='113', 
+                      top='57', width='49', text=u'Vto. para el Pago:', )
+            gui.TextBox(mask='date', name='textbox_306_31_486', 
+                        left='241', top='51', width='113', 
+                        value=datetime.date(2014, 5, 28), )
         with gui.Notebook(name='notebook', height='197', left='7', 
                           top='249', width='631', selection=0, ):
             with gui.TabPanel(name='tab_art', selected=True, 
@@ -175,21 +202,6 @@ with gui.Window(name='mywin',
                 gui.TextBox(name='textbox_715_1534', multiline=True, 
                             height='65', left='147', top='18', width='467', 
                             )
-        gui.TextBox(mask='#####.##', name=u'total_1052', 
-                    alignment='right', left='520', top='485', width='115', 
-                    value=1000.0, )
-        gui.TextBox(mask='#####.##', name=u'total_1052_1438', 
-                    alignment='right', left='520', top='455', width='115', 
-                    value=1000.0, )
-        gui.Label(id=1892, name='label_469_345_1892', alignment='right', 
-                  height='17', left='466', top='488', width='41', 
-                  text=u'IVA:', )
-        gui.Label(name='label_469_345_226', alignment='right', 
-                  height='17', left='468', top='519', width='41', 
-                  text=u'Total:', )
-        gui.Label(name='label_469_345', alignment='right', height='17', 
-                  left='406', top='461', width='110', 
-                  text=u'Otros Tributos:', )
         with gui.Panel(label=u'Autorizaci\xf3n AFIP:', name='panel_3072', 
                        height='121', left='15', top='449', width='320', 
                        image='', ):
@@ -215,33 +227,21 @@ with gui.Window(name='mywin',
                             )
             gui.Button(label=u'Imprimir', name=u'imprimir_472', 
                        left='224', top='53', width='75', )
-        with gui.Panel(label=u'Conceptos a incluir', name='panel_403', 
-                       height='89', left='8', top='157', width='265', 
-                       image='', ):
-            gui.CheckBox(label=u'Productos', name='checkbox_32_32', left='13', 
-                         top='24', width='99', 
-                         )
-            gui.CheckBox(label=u'Servicios', name='checkbox_180_32', left='12', 
-                         top='49', width='110', 
-                         )
-        with gui.Panel(label=u'Per\xedodo Facturado', name='panel_404', 
-                       height='89', left='276', top='158', width='363', 
-                       image='', ):
-            gui.Label(name='label_272_30', left='192', top='25', width='49', 
-                      text=u'Hasta:', )
-            gui.TextBox(mask='date', name='textbox_306_31', left='240', top='20', 
-                        width='113', 
-                        value=datetime.date(2014, 5, 28), )
-            gui.TextBox(mask='date', name='textbox_306_31_486', 
-                        left='241', top='51', width='113', 
-                        value=datetime.date(2014, 5, 28), )
-            gui.TextBox(id=998, mask='date', name='textbox_306_31_486_998', 
-                        left='72', top='20', width='113', 
-                        value=datetime.date(2014, 5, 28), )
-            gui.Label(name='label_272_30_1442', height='17', left='113', 
-                      top='59', width='49', text=u'Vto. para el Pago:', )
-            gui.Label(name='label_272_30_1442_1458', height='17', 
-                      left='17', top='25', width='49', text=u'Desde:', )
+        gui.TextBox(mask='#####.##', name=u'total_1052', 
+                    alignment='right', left='520', top='485', width='115', 
+                    value=1000.0, )
+        gui.TextBox(mask='#####.##', name=u'total_1052_1438', 
+                    alignment='right', left='520', top='455', width='115', 
+                    value=1000.0, )
+        gui.Label(id=1892, name='label_469_345_1892', alignment='right', 
+                  height='17', left='466', top='488', width='41', 
+                  text=u'IVA:', )
+        gui.Label(name='label_469_345_226', alignment='right', 
+                  height='17', left='468', top='519', width='41', 
+                  text=u'Total:', )
+        gui.Label(name='label_469_345', alignment='right', height='17', 
+                  left='406', top='461', width='110', 
+                  text=u'Otros Tributos:', )
         gui.TextBox(mask='#####.##', name=u'total', alignment='right', left='520', 
                     top='515', width='115', 
                     value=1000.0, )
