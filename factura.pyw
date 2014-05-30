@@ -40,7 +40,7 @@ with gui.Window(name='mywin',
     gui.StatusBar(name='statusbar_15_91', 
                   text=u'Servicio Web Factura Electr\xf3nica mercado interno (WSFEv1)', )
     with gui.Panel(label=u'Cliente:', name='panel_136_156', 
-                   height='114', left='8', top='39', width='633', image='', ):
+                   height='114', left='8', top='6', width='633', image='', ):
         gui.TextBox(name='textbox_400_158', left='383', top='82', 
                     width='240', value=u'reingart@gmail.com', )
         gui.TextBox(name='textbox_428_160', multiline=True, 
@@ -72,29 +72,27 @@ with gui.Window(name='mywin',
                     value=u'Mariano Reingart', )
         gui.Label(name='label_530_167_1258', height='17', left='321', 
                   top='56', width='58', text=u'IVA:', )
-    gui.Label(name='label_24_16', height='17', left='13', top='15', 
+    gui.Label(name='label_24_16', height='17', left='13', top='130', 
               width='80', text=u'Comprobante:', )
-    gui.Label(name='label_356_21_155', height='17', left='467', 
-              top='16', width='60', text=u'Fecha:', )
+    gui.ComboBox(name=u'tipo_cbte', text=u'Factura A', left='115', top='125', 
+                 width='170', 
+                 items=[u'Factura A', u'Nota de Credito A', u'Nota de Crédito A', 
+                        u'Factura B', u'Nota de Débito B', u'Nota de Crédito B', 
+                        u'Factura C', u'Nota de Débito C', u'Nota de Crédito C', ], 
+                 string_selection=u'', )
     gui.Label(name='label_356_21_178', height='17', left='290', 
-              top='14', width='20', text=u'N\xb0:', )
-    gui.Image(name='image_507_571', height='36', left='394', top='546', 
-              width='238', filename='sistemas-agiles.png', )
-    gui.Image(name='image_33_540', height='50', left='350', top='495', 
-              width='100', filename='logo-pyafipws.png', )
+              top='130', width='20', text=u'N\xb0:', )
     gui.TextBox(mask='##', name=u'pto_vta', alignment='right', 
-                left='318', top='10', width='47', 
+                left='318', top='125', width='47', 
                 value=99, )
     gui.TextBox(mask='########', name=u'nro_cbte', alignment='right', 
-                left='366', top='10', width='92', 
+                left='366', top='125', width='92', 
                 value=12345678, )
-    gui.TextBox(mask='#####.##', name=u'total', alignment='right', left='520', 
-                top='515', width='115', 
-                value=1000.0, )
-    gui.ComboBox(name=u'tipo_cbte', text=u'Factura A', left='115', top='10', 
-                 width='170', 
-                 items=[u'Factura A', u'Nota de Credito A', u'Nota de Cr\xe9dito A', u'Factura B', u'Nota de D\xe9bito B', u'Nota de Cr\xe9dito B', u'Factura C', u'Nota de D\xe9bito C', u'Nota de Cr\xe9dito C', ], 
-                 string_selection=u'', )
+    gui.Label(name='label_356_21_155', height='17', left='467', 
+              top='130', width='60', text=u'Fecha:', )
+    gui.TextBox(id=290, mask='date', name='textbox_290', left='517', top='125', 
+                width='122', 
+                value=datetime.date(2014, 5, 27), )
     with gui.Notebook(name='notebook', height='197', left='7', 
                       top='249', width='631', selection=0, ):
         with gui.TabPanel(name='tab_art', selected=True, 
@@ -216,9 +214,6 @@ with gui.Window(name='mywin',
                         )
         gui.Button(label=u'Imprimir', name=u'imprimir_472', 
                    left='224', top='53', width='75', )
-    gui.TextBox(id=290, mask='date', name='textbox_290', left='517', top='11', 
-                width='122', 
-                value=datetime.date(2014, 5, 27), )
     with gui.Panel(label=u'Conceptos a incluir', name='panel_403', 
                    height='89', left='8', top='157', width='265', 
                    image='', ):
@@ -246,6 +241,13 @@ with gui.Window(name='mywin',
                   top='59', width='49', text=u'Vto. para el Pago:', )
         gui.Label(name='label_272_30_1442_1458', height='17', 
                   left='17', top='25', width='49', text=u'Desde:', )
+    gui.TextBox(mask='#####.##', name=u'total', alignment='right', left='520', 
+                top='515', width='115', 
+                value=1000.0, )
+    gui.Image(name='image_507_571', height='36', left='394', top='546', 
+              width='238', filename='sistemas-agiles.png', )
+    gui.Image(name='image_33_540', height='50', left='350', top='495', 
+              width='100', filename='logo-pyafipws.png', )
 
 # --- gui2py designer generated code ends ---
 
