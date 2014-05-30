@@ -145,17 +145,17 @@ with gui.Window(name='mywin',
                         left='519', top='97', width='92', )
             gui.Label(name='label_388', left='20', top='11', 
                       text=u'Subtotales de IVA liquidado por al\xedcuota:', )
-        with gui.TabPanel(id=869, name='tabpanel_869', selected=False, 
+        with gui.TabPanel(id=869, name='tributos', selected=False, 
                           text=u'Otros tributos', ):
-            with gui.ListView(name='listview_188', height='102', 
-                              left='12', top='18', width='510', item_count=0, 
+            with gui.GridView(name='grilla', height='102', 
+                              left='12', top='18', width='606', item_count=0, 
                               sort_column=0, ):
-                gui.ListColumn(name='tributo_id', text=u'id', width=50, )
-                gui.ListColumn(name='tributo', text=u'Tributo', width=50, )
-                gui.ListColumn(name='desc', text=u'Descripci\xf3n', width=200, )
-                gui.ListColumn(name='base_imp', text=u'Base Imp.', width=75, )
-                gui.ListColumn(name='alic', text=u'Al\xedcuota', width=75, )
-                gui.ListColumn(name='importe', text=u'Importe', width=125, )
+                gui.GridColumn(name='tributo_id', text=u'id', width=25, type='number', )
+                gui.GridColumn(name='impuesto', text=u'Impuesto', width=75, type='choice:nacional,provincial,municipal,interno,otro',)
+                gui.GridColumn(name='desc', text=u'Descripci\xf3n', width=200, type='text', )
+                gui.GridColumn(name='base_imp', text=u'Base Imp.', width=75, type='double:11,2',)
+                gui.GridColumn(name='alic', text=u'Al\xedcuota', width=75, type='double:3,2',)
+                gui.GridColumn(name='importe', text=u'Importe', width=125, type='double:15,2',)
             gui.Button(label=u'Agregar', name='button_36_161', left='6', 
                        top='127', width='85px', )
             gui.Button(id=493, label=u'Borrar', name='button_588_157_493', 
