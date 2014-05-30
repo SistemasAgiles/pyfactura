@@ -39,39 +39,39 @@ with gui.Window(name='mywin',
             gui.MenuItemSeparator(name='menuitemseparator_130', )
     gui.StatusBar(name='statusbar_15_91', 
                   text=u'Servicio Web Factura Electr\xf3nica mercado interno (WSFEv1)', )
-    with gui.Panel(label=u'Cliente:', name='panel_136_156', 
+    with gui.Panel(label=u'Cliente:', name='cliente', 
                    height='114', left='8', top='6', width='633', image='', ):
-        gui.TextBox(name='textbox_400_158', left='383', top='82', 
-                    width='240', value=u'reingart@gmail.com', )
-        gui.TextBox(name='textbox_428_160', multiline=True, 
-                    height='57', left='112', top='49', width='189', 
-                    value=u'Castagna 4942', )
         gui.Label(name='label_182_163', height='25', left='11', 
                   top='21', width='38', text=u'Documento:', )
-        gui.Label(name='label_268_164', height='31', left='316', 
-                  top='22', width='61', text=u'Nombre:', )
-        gui.Label(name='label_322_165', left='10', top='50', 
-                  width='72', text=u'Domicilio', )
-        gui.Label(name='label_530_167', left='321', top='89', 
-                  width='58', text=u'E-Mail:', )
-        gui.TextBox(mask='##-########-#', name='textbox_228_157', 
-                    left='192', top='17', width='110', 
-                    value=u'20-26756539-3', )
-        gui.ComboBox(name='combobox_416_70', text=u'Responsable Inscripto', 
-                     left='383', top='49', width='190', 
-                     data_selection=u'Responsable Inscripto', 
-                     items=[u'Consumidor Final', u'Responsable Inscripto', u'Exento', u'Monotributo'], 
-                     selection=1, string_selection=u'Responsable Inscripto', )
         gui.ComboBox(name='combobox_416_70_647', text=u'CF', 
                      left='111', top='16', width='78', 
                      data_selection=u'CF', 
                      items=[u'CUIT', u'DNI', u'CF'], selection=2, 
                      string_selection=u'CF', )
+        gui.TextBox(mask='##-########-#', name='textbox_228_157', 
+                    left='192', top='17', width='110', 
+                    value=u'20-26756539-3', )
+        gui.Label(name='label_268_164', height='31', left='316', 
+                  top='22', width='61', text=u'Nombre:', )
         gui.TextBox(name='textbox_400_158_1018', height='27', 
                     left='383', top='17', width='240', 
                     value=u'Mariano Reingart', )
+        gui.Label(name='label_322_165', left='10', top='50', 
+                  width='72', text=u'Domicilio', )
+        gui.TextBox(name='domicilio', multiline=True, 
+                    height='57', left='112', top='49', width='189', 
+                    value=u'Castagna 4942', )
+        gui.Label(name='label_530_167', left='321', top='89', 
+                  width='58', text=u'E-Mail:', )
         gui.Label(name='label_530_167_1258', height='17', left='321', 
                   top='56', width='58', text=u'IVA:', )
+        gui.ComboBox(name='combobox_416_70', text=u'Responsable Inscripto', 
+                     left='383', top='49', width='190', 
+                     data_selection=u'Responsable Inscripto', 
+                     items=[u'Consumidor Final', u'Responsable Inscripto', u'Exento', u'Monotributo'], 
+                     selection=1, string_selection=u'Responsable Inscripto', )
+        gui.TextBox(name='email', left='383', top='82', 
+                    width='240', value=u'reingart@gmail.com', )
     gui.Label(name='label_24_16', height='17', left='13', top='130', 
               width='80', text=u'Comprobante:', )
     gui.ComboBox(name=u'tipo_cbte', text=u'Factura A', left='115', top='125', 
