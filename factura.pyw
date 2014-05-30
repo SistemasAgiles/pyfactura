@@ -8,6 +8,7 @@ from __future__ import with_statement   # for python 2.5 compatibility
 __author__ = "Mariano Reingart (reingart@gmail.com)"
 __copyright__ = "Copyright (C) 2014- Mariano Reingart"
 __license__ = "LGPL 3.0"
+__version__ = "0.1a"
 
 # images were taken from Pythoncard's proof and widgets demos
 # for more complete examples, see each control module
