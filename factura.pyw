@@ -31,11 +31,24 @@ import wx, locale
 
 # configuración general
 
+cert = "reingart.crt"
+privatekey = "reingart.key"
+wsaa_url = None
+wsfev1_url = None
+cuit_emisor = 2026756539
 cat_iva_emisor = "RI"
 
 # inicializo los componenetes de negocio:
 
 padron = PadronAFIP()
+wsaa = WSAA()
+wsfev1 = WSFEv1()
+ta = wsaa.Autenticar("wsfe", cert, privatekey, wsaa_url)
+if not ta:
+    sys.exit("Imposible autenticar con WSAA: %s" % wsaa.Excepcion)
+wsfev1.SetTicketAcceso(ta)
+wsfev1.Cuit = cuit_emisor
+wsfev1.Conectar("", wsfev1_url)
 
 # --- here go your event handlers ---
 
@@ -84,6 +97,14 @@ def on_cat_iva_change(evt):
         tipo_cbte = 11
     panel['tipo_cbte'].value = tipo_cbte
 
+def on_tipo_cbte_change(evt):
+    panel = evt.target.get_parent()
+    tipo_cbte = panel['tipo_cbte'].value
+    pto_vta = panel['pto_vta'].value
+    nro_cbte = wsfev1.CompUltimoAutorizado(tipo_cbte, pto_vta)
+    nro_cbte = int(nro_cbte) + 1
+    panel['nro_cbte'].value = nro_cbte
+    
 
 # --- gui2py designer generated code starts ---
 
@@ -136,7 +157,7 @@ with gui.Window(name='mywin',
         gui.Label(name='label_24_16', height='17', left='13', top='130', 
                   width='80', text=u'Comprobante:', )
         gui.ComboBox(name=u'tipo_cbte', text=u'Factura A', left='115', top='125', 
-                     width='170', 
+                     width='170', onchange=on_tipo_cbte_change,
                      items={1: u'Factura A', 2: u'Nota de Débito A', 
                             3: u'Nota de Crédito A', 4: 'Recibo A',
                             6: u'Factura B', 7: u'Nota de Débito B', 
