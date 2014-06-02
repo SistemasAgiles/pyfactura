@@ -26,6 +26,14 @@ import wx, locale
 
 # --- here go your event handlers ---
 
+def on_tipo_cbte_change(evt):
+    ctrl = evt.target
+    if ctrl.value == 80:
+        mask = '##-########-#'
+    else:
+        mask = '########'
+    ctrl.get_parent()['nro_doc'].text = ""
+    ctrl.get_parent()['nro_doc'].mask = mask
 
 
 # --- gui2py designer generated code starts ---
@@ -47,7 +55,7 @@ with gui.Window(name='mywin',
                       top='21', width='38', text=u'Documento:', )
             gui.ComboBox(name='tipo_doc', text=u'CF', 
                          left='111', top='16', width='78', 
-                         value=80, 
+                         value=80, onchange=on_tipo_cbte_change,
                          items={80: u'CUIT', 96: u'DNI', 99: u'CF'}, )
             gui.TextBox(mask='##-########-#', name='nro_doc', 
                         left='192', top='17', width='110', 
