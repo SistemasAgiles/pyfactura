@@ -16,15 +16,24 @@ __version__ = "0.1a"
 import datetime     # base imports, used by some controls and event handlers
 import decimal
 import time
+import sys
 
 import gui          # import gui2py package (shortcuts)
 
 from pyafipws.padron import PadronAFIP
+from pyafipws.wsaa import WSAA
+from pyafipws.wsfev1 import WSFEv1
 
 # set default locale to handle correctly numeric format (maskedit):
 import wx, locale
 #locale.setlocale(locale.LC_ALL, u'es_ES.UTF-8')
 #loc = wx.Locale(wx.LANGUAGE_DEFAULT, wx.LOCALE_LOAD_DEFAULT)
+
+# configuración general
+
+cat_iva_emisor = "RI"
+
+# inicializo los componenetes de negocio:
 
 padron = PadronAFIP()
 
@@ -61,6 +70,20 @@ def on_nro_doc_change(evt):
         panel['domicilio'] = ""
         cat_iva = None
     panel['cat_iva'].value = cat_iva
+
+def on_cat_iva_change(evt):
+    ctrl = evt.target
+    panel = ctrl.get_parent().get_parent()
+    cat_iva = ctrl.value
+    if cat_iva_emisor == "RI":
+        if cat_iva == "RI":
+            tipo_cbte = 1  # factura A
+        else:
+            tipo_cbte = 6  # factura B
+    else:
+        tipo_cbte = 11
+    panel['tipo_cbte'].value = tipo_cbte
+
 
 # --- gui2py designer generated code starts ---
 
@@ -103,7 +126,7 @@ with gui.Window(name='mywin',
                       top='56', width='58', text=u'IVA:', )
             gui.ComboBox(name='cat_iva', text=u'Responsable Inscripto', 
                          left='383', top='49', width='190', 
-                         value='RI', 
+                         value='RI', onchange=on_cat_iva_change,
                          items={'CF': u'Consumidor Final', 
                                 'RI': u'Responsable Inscripto', 
                                 'EX': u'Exento', 'MT': u'Monotributo'}, 
