@@ -47,12 +47,12 @@ with gui.Window(name='mywin',
                       top='21', width='38', text=u'Documento:', )
             gui.ComboBox(name='tipo_doc', text=u'CF', 
                          left='111', top='16', width='78', 
-                         data_selection=u'CF', 
-                         items=[u'CUIT', u'DNI', u'CF'], selection=2, 
-                         string_selection=u'CF', )
+                         value=80, 
+                         items={80: u'CUIT', 96: u'DNI', 99: u'CF'}, )
             gui.TextBox(mask='##-########-#', name='nro_doc', 
                         left='192', top='17', width='110', 
-                        value=u'20-26756539-3', )
+                        value=u'20-26756539-3', 
+                        )
             gui.Label(name='label_268_164', height='31', left='316', 
                       top='22', width='61', text=u'Nombre:', )
             gui.TextBox(name='nombre', 
@@ -69,18 +69,23 @@ with gui.Window(name='mywin',
                       top='56', width='58', text=u'IVA:', )
             gui.ComboBox(name='cat_iva', text=u'Responsable Inscripto', 
                          left='383', top='49', width='190', 
-                         data_selection=u'Responsable Inscripto', 
-                         items=[u'Consumidor Final', u'Responsable Inscripto', u'Exento', u'Monotributo'], 
-                         selection=1, string_selection=u'Responsable Inscripto', )
+                         value='RI', 
+                         items={'CF': u'Consumidor Final', 
+                                'RI': u'Responsable Inscripto', 
+                                'EX': u'Exento', 'MT': u'Monotributo'}, 
+                         )
             gui.TextBox(name='email', left='383', top='82', 
                         width='240', value=u'reingart@gmail.com', )
         gui.Label(name='label_24_16', height='17', left='13', top='130', 
                   width='80', text=u'Comprobante:', )
         gui.ComboBox(name=u'tipo_cbte', text=u'Factura A', left='115', top='125', 
                      width='170', 
-                     items=[u'Factura A', u'Nota de Débito A', u'Nota de Crédito A', 
-                            u'Factura B', u'Nota de Débito B', u'Nota de Crédito B', 
-                            u'Factura C', u'Nota de Débito C', u'Nota de Crédito C', ], 
+                     items={1: u'Factura A', 2: u'Nota de Débito A', 
+                            3: u'Nota de Crédito A', 4: 'Recibo A',
+                            6: u'Factura B', 7: u'Nota de Débito B', 
+                            8: u'Nota de Crédito B', 9: 'Recibo B',
+                            11: u'Factura C', 12: u'Nota de Débito C', 
+                            13: u'Nota de Crédito C', 15: 'Recibo C', }, 
                      string_selection=u'', )
         gui.Label(name='label_356_21_178', height='17', left='290', 
                   top='130', width='20', text=u'N\xb0:', )
