@@ -19,10 +19,14 @@ import time
 
 import gui          # import gui2py package (shortcuts)
 
+from pyafipws.padron import PadronAFIP
+
 # set default locale to handle correctly numeric format (maskedit):
 import wx, locale
 #locale.setlocale(locale.LC_ALL, u'es_ES.UTF-8')
 #loc = wx.Locale(wx.LANGUAGE_DEFAULT, wx.LOCALE_LOAD_DEFAULT)
+
+padron = PadronAFIP()
 
 # --- here go your event handlers ---
 
@@ -35,6 +39,28 @@ def on_tipo_cbte_change(evt):
     ctrl.get_parent()['nro_doc'].text = ""
     ctrl.get_parent()['nro_doc'].mask = mask
 
+def on_nro_doc_change(evt):
+    ctrl = evt.target
+    doc_nro = ctrl.value
+    panel = ctrl.get_parent()
+    if doc_nro:
+        doc_nro = doc_nro.replace("-", "")
+        if padron.Buscar(doc_nro):
+            panel['nombre'].value = padron.denominacion
+            panel['domicilio'].value = ""
+            if padron.imp_iva in ('AC', 'S'):
+                cat_iva = "RI"
+            elif padron.imp_iva == 'EX':
+                cat_iva = "EX"
+            elif padron.monotributo:
+                cat_iva = "MT"
+            else:
+                cat_iva = "CF"
+    else:
+        panel['nombre'] = ""
+        panel['domicilio'] = ""
+        cat_iva = None
+    panel['cat_iva'].value = cat_iva
 
 # --- gui2py designer generated code starts ---
 
@@ -59,7 +85,7 @@ with gui.Window(name='mywin',
                          items={80: u'CUIT', 96: u'DNI', 99: u'CF'}, )
             gui.TextBox(mask='##-########-#', name='nro_doc', 
                         left='192', top='17', width='110', 
-                        value=u'20-26756539-3', 
+                        value=u'20-26756539-3', onblur=on_nro_doc_change,
                         )
             gui.Label(name='label_268_164', height='31', left='316', 
                       top='22', width='61', text=u'Nombre:', )
