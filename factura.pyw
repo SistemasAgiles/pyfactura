@@ -14,6 +14,7 @@ __version__ = "0.1a"
 # for more complete examples, see each control module
 
 import datetime     # base imports, used by some controls and event handlers
+from dateutil.relativedelta import relativedelta
 import decimal
 import time
 import sys
@@ -52,7 +53,7 @@ wsfev1.Conectar("", wsfev1_url)
 
 # --- here go your event handlers ---
 
-def on_tipo_cbte_change(evt):
+def on_tipo_doc_change(evt):
     ctrl = evt.target
     if ctrl.value == 80:
         mask = '##-########-#'
@@ -98,6 +99,7 @@ def on_cat_iva_change(evt):
     panel['tipo_cbte'].value = tipo_cbte
 
 def on_tipo_cbte_change(evt):
+    print evt.target
     panel = evt.target.get_parent()
     tipo_cbte = panel['tipo_cbte'].value
     pto_vta = panel['pto_vta'].value
@@ -106,6 +108,9 @@ def on_tipo_cbte_change(evt):
     panel['nro_cbte'].value = nro_cbte
 
 def on_load(evt):
+    today = datetime.datetime.today()
+    desde = today - datetime.timedelta(today.day - 1)
+    hasta = desde + relativedelta(months=1) - datetime.timedelta(1)
     panel = evt.target['panel']
     panel['cliente']['nro_doc'].value = ""
     panel['cliente']['nombre'].value = ""
@@ -113,6 +118,12 @@ def on_load(evt):
     panel['cliente']['email'].value = ""
     panel['cliente']['cat_iva'].value = None
     panel['tipo_cbte'].value = None
+    panel['fecha_cbte'].value = today
+    panel['periodo']['fecha_venc_pago'].value = today
+    panel['periodo']['fecha_desde'].value = desde
+    panel['periodo']['fecha_hasta'].value = hasta
+    panel['aut']['cae'].value = ""
+    panel['aut']['fecha_vto_cae'].value = None
 
 
 # --- gui2py designer generated code starts ---
@@ -134,7 +145,7 @@ with gui.Window(name='mywin',
                       top='21', width='38', text=u'Documento:', )
             gui.ComboBox(name='tipo_doc', text=u'CF', 
                          left='111', top='16', width='78', 
-                         value=80, onchange=on_tipo_cbte_change,
+                         value=80, onchange=on_tipo_doc_change,
                          items={80: u'CUIT', 96: u'DNI', 99: u'CF'}, )
             gui.TextBox(mask='##-########-#', name='nro_doc', 
                         left='192', top='17', width='110', 
@@ -184,7 +195,7 @@ with gui.Window(name='mywin',
                     value=12345678, )
         gui.Label(name='label_356_21_155', height='17', left='467', 
                   top='130', width='60', text=u'Fecha:', )
-        gui.TextBox(id=290, mask='date', name='textbox_290', left='517', top='125', 
+        gui.TextBox(id=290, mask='date', name='fecha_cbte', left='517', top='125', 
                     width='122', 
                     value=datetime.date(2014, 5, 27), )
         with gui.Panel(label=u'Conceptos a incluir', name='conceptos', 
@@ -211,7 +222,7 @@ with gui.Window(name='mywin',
                         value=datetime.date(2014, 5, 28), )
             gui.Label(name='label_272_30_1442', height='17', left='113', 
                       top='57', width='49', text=u'Vto. para el Pago:', )
-            gui.TextBox(mask='date', name='fecha_vto_pago', 
+            gui.TextBox(mask='date', name='fecha_venc_pago', 
                         left='241', top='51', width='113', 
                         value=datetime.date(2014, 5, 28), )
         with gui.Notebook(name='notebook', height='197', left='7', 
@@ -336,7 +347,7 @@ with gui.Window(name='mywin',
                   text=u'Total:', )
         gui.TextBox(mask='#####.##', name=u'imp_total', alignment='right', 
                     left='520', top='515', width='115', value=1000.0, )
-        gui.Image(name='image_507_571', height='36', left='394', top='546', 
+        gui.Image(name='image_507_571', height='36', left='394', top='600', 
                   width='238', filename='sistemas-agiles.png', )
         gui.Image(name='image_33_540', height='50', left='350', top='495', 
                   width='100', filename='logo-pyafipws.png', )
