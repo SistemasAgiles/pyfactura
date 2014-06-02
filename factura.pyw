@@ -99,7 +99,6 @@ def on_cat_iva_change(evt):
     panel['tipo_cbte'].value = tipo_cbte
 
 def on_tipo_cbte_change(evt):
-    print evt.target
     panel = evt.target.get_parent()
     tipo_cbte = panel['tipo_cbte'].value
     pto_vta = panel['pto_vta'].value
@@ -124,6 +123,16 @@ def on_load(evt):
     panel['periodo']['fecha_hasta'].value = hasta
     panel['aut']['cae'].value = ""
     panel['aut']['fecha_vto_cae'].value = None
+
+def on_grid_cell_change(evt):
+    grid = evt.target
+    value = evt.detail
+    col_name = grid.columns[evt.column]
+    qty = grid.items[evt.row]['qty']
+    precio = grid.items[evt.row]['precio']
+    for i, col in enumerate(grid.columns):
+        if i != evt.column and col.name == 'subtotal':
+            grid.items[evt.row][i] = qty * precio
 
 
 # --- gui2py designer generated code starts ---
@@ -230,8 +239,8 @@ with gui.Window(name='mywin',
             with gui.TabPanel(name='tab_art', selected=True, 
                               text=u'Art\xedculos', ):
                 with gui.GridView(name=u'items', height='118', left='10', 
-                                  top='6', width='610', 
-                                  fgcolor=u'#3C3C3C', row_label=""):
+                                  top='6', width='610', row_label="",
+                                  ongridcellchanged=on_grid_cell_change):
                     gui.GridColumn(align='right', name=u'qty', type='double:4,2', represent=u'%0.2f', 
                                    text=u'Cant.', width=50, )
                     gui.GridColumn(name=u'codigo', represent='%s', type='text', 
