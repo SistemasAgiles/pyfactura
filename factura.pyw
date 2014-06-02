@@ -104,14 +104,23 @@ def on_tipo_cbte_change(evt):
     nro_cbte = wsfev1.CompUltimoAutorizado(tipo_cbte, pto_vta)
     nro_cbte = int(nro_cbte) + 1
     panel['nro_cbte'].value = nro_cbte
-    
+
+def on_load(evt):
+    panel = evt.target['panel']
+    panel['cliente']['nro_doc'].value = ""
+    panel['cliente']['nombre'].value = ""
+    panel['cliente']['domicilio'].value = ""
+    panel['cliente']['email'].value = ""
+    panel['cliente']['cat_iva'].value = None
+    panel['tipo_cbte'].value = None
+
 
 # --- gui2py designer generated code starts ---
 
 with gui.Window(name='mywin', 
                 title=u'Aplicativo Facturaci\xf3n Electr\xf3nica', 
                 resizable=True, height='596px', left='181', top='52', 
-                width='653px', 
+                width='653px', onload=on_load,
                 image='', ):
     with gui.MenuBar(name='menubar_83_155', ):
         with gui.Menu(name='menu_114', ):
@@ -146,7 +155,7 @@ with gui.Window(name='mywin',
             gui.Label(name='label_530_167_1258', height='17', left='321', 
                       top='56', width='58', text=u'IVA:', )
             gui.ComboBox(name='cat_iva', text=u'Responsable Inscripto', 
-                         left='383', top='49', width='190', 
+                         left='383', top='49', width='190', readonly=True,
                          value='RI', onchange=on_cat_iva_change,
                          items={'CF': u'Consumidor Final', 
                                 'RI': u'Responsable Inscripto', 
@@ -156,7 +165,7 @@ with gui.Window(name='mywin',
                         width='240', value=u'reingart@gmail.com', )
         gui.Label(name='label_24_16', height='17', left='13', top='130', 
                   width='80', text=u'Comprobante:', )
-        gui.ComboBox(name=u'tipo_cbte', text=u'Factura A', left='115', top='125', 
+        gui.ComboBox(name=u'tipo_cbte', left='115', top='125', 
                      width='170', onchange=on_tipo_cbte_change,
                      items={1: u'Factura A', 2: u'Nota de Débito A', 
                             3: u'Nota de Crédito A', 4: 'Recibo A',
@@ -164,7 +173,7 @@ with gui.Window(name='mywin',
                             8: u'Nota de Crédito B', 9: 'Recibo B',
                             11: u'Factura C', 12: u'Nota de Débito C', 
                             13: u'Nota de Crédito C', 15: 'Recibo C', }, 
-                     string_selection=u'', )
+                     text=u'', readonly=True)
         gui.Label(name='label_356_21_178', height='17', left='290', 
                   top='130', width='20', text=u'N\xb0:', )
         gui.TextBox(mask='##', name=u'pto_vta', alignment='right', 
