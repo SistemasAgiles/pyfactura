@@ -337,6 +337,10 @@ def generar_pdf(evt):
         iva_id = it['iva_id']
         imp_iva = it['imp_iva']
         subtotal = it['subtotal']
+        # no discriminar IVA si no es Factura A:
+        if tipo_cbte not in (1, 2, 3, 4):
+            precio += imp_iva / qty
+            subtotal += imp_iva
         despacho = ""
         fepdf.AgregarDetalleItem(u_mtx, cod_mtx, codigo, ds, qty, umed, 
                 precio, bonif, iva_id, imp_iva, subtotal, despacho)
