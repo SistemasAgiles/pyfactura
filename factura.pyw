@@ -140,7 +140,6 @@ def on_grid_cell_change(evt):
     recalcular()
 
 def recalcular():
-    
     neto_iva = {}
     imp_iva = {}
     tasas_iva = {4: 10.5, 5: 21, 6: 27}
@@ -152,11 +151,19 @@ def recalcular():
         subtotal = qty * precio
         it['subtotal'] = subtotal
         total += subtotal
-        neto_iva[iva_id] = neto_iva.get(iva_id, 0.) + subtotal
         if iva_id in tasas_iva:
+            neto_iva[iva_id] = neto_iva.get(iva_id, 0.) + subtotal
             iva_liq = subtotal * tasas_iva[iva_id] / 100.
             imp_iva[iva_id] = imp_iva.get(iva_id, 0.) + iva_liq
             it['imp_iva'] = iva_liq
+    listado = panel['notebook']['alicuotas_iva']['listado']
+    listado.items.clear()
+    for iva_id, iva_liq in imp_iva.items():
+        listado.items[str(iva_id)] = {'iva_id': iva_id, 'importe': iva_liq,
+                                       'base_imp': neto_iva[iva_id],
+                                       'alicuota': tasas_iva[iva_id]}
+    neto = sum(neto_iva.values(), 0.)
+    panel['notebook']['alicuotas_iva']['imp_neto'].value = neto
     panel['notebook']['alicuotas_iva']['imp_tot_conc'].value = neto_iva.get(1, 0)
     panel['notebook']['alicuotas_iva']['imp_op_ex'].value = neto_iva.get(2, 0)
     panel['imp_iva'].value = sum(imp_iva.values(), 0.)
@@ -298,12 +305,15 @@ with gui.Window(name='mywin',
                 with gui.ListView(name='listado', height='100', 
                                   left='15', top='34', width='357', item_count=0, 
                                   sort_column=1, ):
-                    gui.ListColumn(name=u'iva_id', text=u'ID', width=25, )
+                    gui.ListColumn(name=u'iva_id', text=u'ID', width=40, 
+                                   represent=lambda x: {3: "0%", 4: "10.5%", 
+                                                        5: "21%", 6: "27%"}[x])
                     gui.ListColumn(name=u'alicuota', text=u'Al\xedcuota', 
-                                   width=100, )
-                    gui.ListColumn(name=u'base_imp', text=u'Base Imp.', width=100, )
+                                   align="right", width=75, represent="%.2f")
+                    gui.ListColumn(name=u'base_imp', text=u'Base Imp.', 
+                                   width=100, represent="%.2f", align="right")
                     gui.ListColumn(name=u'importe', text=u'Importe IVA', 
-                                   width=125, )
+                                   width=100, represent="%.2f", align="right")
                 gui.Label(name='label_388', left='20', top='11', 
                           text=u'Subtotales de IVA liquidado por al\xedcuota:', )
                 gui.Label(name='label_387_630', height='17', left='393', 
