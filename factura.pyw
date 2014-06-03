@@ -177,6 +177,71 @@ def recalcular():
     panel['imp_trib'].value = 0
     panel['imp_total'].value = total + sum(imp_iva.values(), 0.)
 
+def obtener_cae(evt):
+    tipo_cbte = panel['tipo_cbte'].value
+    punto_vta = panel['pto_vta'].value
+    cbte_nro = panel['nro_cbte'].value
+    fecha_cbte =  panel['fecha_cbte'].value.strftime("%Y%m%d")
+    concepto = 0
+    if panel['conceptos']['productos'].value:
+        concepto += 1
+    if panel['conceptos']['servicios'].value:
+        concepto += 2
+    tipo_doc = panel['cliente']['tipo_doc'].value
+    nro_doc = panel['cliente']['nro_doc'].value.replace("-", "")
+    imp_neto = panel['notebook']['alicuotas_iva']['imp_neto'].value
+    imp_iva = panel['imp_iva'].value
+    imp_trib = panel['imp_trib'].value
+    imp_op_ex = panel['notebook']['alicuotas_iva']['imp_op_ex'].value
+    imp_tot_conc = panel['notebook']['alicuotas_iva']['imp_tot_conc'].value
+    imp_total = panel['imp_total'].value
+    fecha_venc_pago = panel['periodo']['fecha_venc_pago'].value.strftime("%Y%m%d")
+    # Fechas del período del servicio facturado (solo si concepto = 1?)
+    fecha_serv_desde = panel['periodo']['fecha_desde'].value.strftime("%Y%m%d")
+    fecha_serv_hasta = panel['periodo']['fecha_hasta'].value.strftime("%Y%m%d")
+    moneda_id = 'PES'; moneda_ctz = '1.000'
+    wsfev1.CrearFactura(concepto, tipo_doc, nro_doc, tipo_cbte, punto_vta,
+        cbte_nro, cbte_nro, imp_total, imp_tot_conc, imp_neto,
+        imp_iva, imp_trib, imp_op_ex, fecha_cbte, fecha_venc_pago, 
+        fecha_serv_desde, fecha_serv_hasta, #--
+        moneda_id, moneda_ctz)
+
+    if False:
+        tipo = 19
+        pto_vta = 2
+        nro = 1234
+        wsfev1.AgregarCmpAsoc(tipo, pto_vta, nro)
+
+    if False:
+        id = 99
+        desc = 'Impuesto Municipal Matanza'
+        base_imp = 100
+        alic = 1
+        importe = 1
+        wsfev1.AgregarTributo(id, desc, base_imp, alic, importe)
+
+    listado = panel['notebook']['alicuotas_iva']['listado']
+    for it in listado.items:
+        iva_id = it['iva_id']
+        base_imp = it['base_imp']
+        importe = it['importe']
+        wsfev1.AgregarIva(iva_id, base_imp, importe)
+
+    try:
+        wsfev1.CAESolicitar()
+        panel['aut']['cae'].value = wsfev1.CAE
+        vto = datetime.datetime.strptime(wsfev1.Vencimiento, "%Y%m%d").date()
+        panel['aut']['fecha_vto_cae'].value = vto
+    except:
+        print wsfev1.Excepcion, wsfev1.ErrMsg
+        print wsfev1.XmlRequest, wsfev1.XmlResponse
+    if wsfev1.Excepcion:
+        gui.alert(wsfev1.Excepcion, u"Excepcion")
+    if wsfev1.Obs:
+        gui.alert(wsfev1.Obs, u"Observaciones AFIP")
+    if wsfev1.ErrMsg:
+        gui.alert(wsfev1.ErrMsg, u"Mensajes Error AFIP")
+
 # --- gui2py designer generated code starts ---
 
 with gui.Window(name='mywin', 
@@ -386,7 +451,7 @@ with gui.Window(name='mywin',
                         alignment='center', left='94', top='54',                         
                         value=datetime.date(2014, 2, 11), )
             gui.Button(label=u'Obtener', name=u'obtener', left='224', 
-                       top='21', width='75', )
+                       top='21', width='75', onclick=obtener_cae)
             gui.Label(name='label_26_372', left='11', top='90', width='39', 
                       text=u'Resultado:', )
             gui.RadioButton(label=u'Aceptado', name='aceptado', 
