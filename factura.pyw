@@ -39,6 +39,8 @@ wsfev1_url = None
 cuit_emisor = 2026756539
 cat_iva_emisor = "RI"
 
+import datos
+
 # inicializo los componenetes de negocio:
 
 padron = PadronAFIP()
@@ -127,11 +129,13 @@ def on_load(evt):
 def on_grid_cell_change(evt):
     grid = evt.target
     value = evt.detail
-    col_name = grid.columns[evt.column]
+    col_name = grid.columns[evt.col].name
+    if col_name == "codigo":
+        grid.items[evt.row]['ds'] = datos.articulos.get(value, "")
     qty = grid.items[evt.row]['qty']
     precio = grid.items[evt.row]['precio']
     for i, col in enumerate(grid.columns):
-        if i != evt.column and col.name == 'subtotal':
+        if i != evt.col and col.name == 'subtotal':
             grid.items[evt.row][i] = qty * precio
 
 
@@ -382,7 +386,7 @@ panel = mywin['panel']
 
 # agrego item de ejemplo:
 new_key = 'my_key_%s' % time.time()
-panel['notebook']['tab_art']['items'].items.append({'qty': '1', 'codigo': '1111', 
+panel['notebook']['tab_art']['items'].items.append({'qty': 1, 'codigo': '1111', 
     'ds': u"Honorarios  p/administración  de alquileres", 'precio': 1000., 'iva_id': 5, 
     'subtotal': 1210.})
 
