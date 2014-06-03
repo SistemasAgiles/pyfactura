@@ -8,13 +8,14 @@ from __future__ import with_statement   # for python 2.5 compatibility
 __author__ = "Mariano Reingart (reingart@gmail.com)"
 __copyright__ = "Copyright (C) 2014- Mariano Reingart"
 __license__ = "LGPL 3.0"
-__version__ = "0.2a"
+__version__ = "0.3a"
 
 # images were taken from Pythoncard's proof and widgets demos
 # for more complete examples, see each control module
 
 import datetime     # base imports, used by some controls and event handlers
 import decimal
+import os
 import time
 import sys
 
@@ -23,6 +24,7 @@ import gui          # import gui2py package (shortcuts)
 from pyafipws.padron import PadronAFIP
 from pyafipws.wsaa import WSAA
 from pyafipws.wsfev1 import WSFEv1
+from pyafipws.pyfepdf import FEPDF
 
 # set default locale to handle correctly numeric format (maskedit):
 import wx, locale
@@ -37,6 +39,7 @@ wsaa_url = None
 wsfev1_url = None
 cuit_emisor = 20267565393
 cat_iva_emisor = "RI"
+conf_fact = {}
 
 import datos
 
@@ -51,6 +54,15 @@ if not ta:
 wsfev1.SetTicketAcceso(ta)
 wsfev1.Cuit = cuit_emisor
 wsfev1.Conectar("", wsfev1_url)
+fepdf = FEPDF()
+# cargo el formato CSV por defecto (factura.csv)
+fepdf.CargarFormato(conf_fact.get("formato", "factura.csv"))
+# establezco formatos (cantidad de decimales) según configuración:
+fepdf.FmtCantidad = conf_fact.get("fmt_cantidad", "0.2")
+fepdf.FmtPrecio = conf_fact.get("fmt_precio", "0.2")
+# configuración general del PDF:
+fepdf.CUIT = cuit_emisor
+
 
 # --- here go your event handlers ---
 
@@ -247,6 +259,121 @@ def obtener_cae(evt):
         gui.alert(wsfev1.Obs, u"Observaciones AFIP")
     if wsfev1.ErrMsg:
         gui.alert(wsfev1.ErrMsg, u"Mensajes Error AFIP")
+
+def generar_pdf(evt):
+    tipo_cbte = panel['tipo_cbte'].value
+    punto_vta = panel['pto_vta'].value
+    cbte_nro = panel['nro_cbte'].value
+    fecha_cbte =  panel['fecha_cbte'].value.strftime("%Y%m%d")
+    concepto = 0
+    if panel['conceptos']['productos'].value:
+        concepto += 1
+    if panel['conceptos']['servicios'].value:
+        concepto += 2
+    tipo_doc = panel['cliente']['tipo_doc'].value
+    nro_doc = panel['cliente']['nro_doc'].value.replace("-", "")
+    imp_neto = panel['notebook']['alicuotas_iva']['imp_neto'].value
+    imp_iva = panel['imp_iva'].value
+    imp_trib = panel['imp_trib'].value
+    imp_op_ex = panel['notebook']['alicuotas_iva']['imp_op_ex'].value
+    imp_tot_conc = panel['notebook']['alicuotas_iva']['imp_tot_conc'].value
+    imp_total = panel['imp_total'].value
+    fecha_venc_pago = panel['periodo']['fecha_venc_pago'].value.strftime("%Y%m%d")
+    fecha_serv_desde = panel['periodo']['fecha_desde'].value.strftime("%Y%m%d")
+    fecha_serv_hasta = panel['periodo']['fecha_hasta'].value.strftime("%Y%m%d")
+    moneda_id = 'PES'; moneda_ctz = '1.000'
+    obs_generales = panel['notebook']['obs']['generales'].value
+    obs_comerciales = panel['notebook']['obs']['comerciales'].value
+    nombre_cliente = panel['cliente']['nombre'].value
+    domicilio_cliente = panel['cliente']['domicilio'].value
+    pais_dst_cmp = 200  # Argentina
+    id_impositivo =  panel['cliente']['cat_iva'].text
+    forma_pago = ""  # '30 dias'
+    incoterms = 'FOB'
+    idioma_cbte = 1  # español
+    motivo = "11"    # 
+    cae = panel['aut']['cae'].value
+    fch_venc_cae = panel['aut']['fecha_vto_cae'].value.strftime("%Y%m%d")
+    
+    fepdf.CrearFactura(concepto, tipo_doc, nro_doc, tipo_cbte, punto_vta,
+        cbte_nro, imp_total, imp_tot_conc, imp_neto,
+        imp_iva, imp_trib, imp_op_ex, fecha_cbte, fecha_venc_pago, 
+        fecha_serv_desde, fecha_serv_hasta, 
+        moneda_id, moneda_ctz, cae, fch_venc_cae, id_impositivo,
+        nombre_cliente, domicilio_cliente, pais_dst_cmp, 
+        obs_comerciales, obs_generales, forma_pago, incoterms, 
+        idioma_cbte, motivo)
+
+    if False:
+        tipo = 91
+        pto_vta = 2
+        nro = 1234
+        fepdf.AgregarCmpAsoc(tipo, pto_vta, nro)
+
+    if False:
+        tributo_id = 99
+        desc = 'Impuesto Municipal Matanza'
+        base_imp = "100.00"
+        alic = "1.00"
+        importe = "1.00"
+        fepdf.AgregarTributo(tributo_id, desc, base_imp, alic, importe)
+
+    listado = panel['notebook']['alicuotas_iva']['listado']
+    for it in listado.items:
+        iva_id = it['iva_id']
+        base_imp = it['base_imp']
+        importe = it['importe']
+        fepdf.AgregarIva(iva_id, base_imp, importe)
+    
+    for it in grilla.items:
+        u_mtx = ""
+        cod_mtx = ""
+        codigo = it['codigo']
+        ds = it['ds']
+        qty = it['qty']
+        umed = 7
+        precio = it['precio']
+        bonif = 0.00
+        iva_id = it['iva_id']
+        imp_iva = it['imp_iva']
+        subtotal = it['subtotal']
+        despacho = ""
+        fepdf.AgregarDetalleItem(u_mtx, cod_mtx, codigo, ds, qty, umed, 
+                precio, bonif, iva_id, imp_iva, subtotal, despacho)
+
+    if True:
+        fepdf.AgregarDato("logo", "logo-pyafipws.png")
+
+    fepdf.CrearPlantilla(papel=conf_fact.get("papel", "legal"), 
+                         orientacion=conf_fact.get("orientacion", "portrait"))
+    fepdf.ProcesarPlantilla(num_copias=int(conf_fact.get("copias", 1)),
+                            lineas_max=int(conf_fact.get("lineas_max", 24)),
+                            qty_pos=conf_fact.get("cant_pos") or 'izq')
+    salida = conf_fact.get("salida", "")
+    fact = fepdf.factura
+    if salida:
+        pass
+    elif 'pdf' in fact and fact['pdf']:
+        salida = fact['pdf']
+    else:
+        # genero el nombre de archivo según datos de factura
+        d = os.path.join(conf_fact.get('directorio', "."), fact['fecha_cbte'])
+        if not os.path.isdir(d):
+            os.makedirs(d)
+        fs = conf_fact.get('archivo','numero').split(",")
+        it = fact.copy()
+        tipo_fact, letra_fact, numero_fact = fact['_fmt_fact']
+        it['tipo'] = tipo_fact.replace(" ", "_")
+        it['letra'] = letra_fact
+        it['numero'] = numero_fact
+        it['mes'] = fact['fecha_cbte'][4:6]
+        it['año'] = fact['fecha_cbte'][0:4]
+        fn = u''.join([unicode(it.get(ff,ff)) for ff in fs])
+        fn = fn.encode('ascii', 'replace').replace('?','_')
+        salida = os.path.join(d, "%s.pdf" % fn)
+    fepdf.GenerarPDF(archivo=salida)
+    fepdf.MostrarPDF(archivo=salida,imprimir='--imprimir' in sys.argv)
+
 
 # --- gui2py designer generated code starts ---
 
@@ -472,7 +599,7 @@ with gui.Window(name='mywin',
                             left='199', top='88', width='100', 
                             )
             gui.Button(label=u'Imprimir', name=u'imprimir', 
-                       left='224', top='53', width='75', )
+                       left='224', top='53', width='75', onclick=generar_pdf)
         gui.Label(id=1892, name='label_469_345_1892', alignment='right', 
                   height='17', left='466', top='488', width='41', 
                   text=u'IVA:', )
