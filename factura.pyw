@@ -241,18 +241,21 @@ with gui.Window(name='mywin',
                 with gui.GridView(name=u'items', height='118', left='10', 
                                   top='6', width='610', row_label="",
                                   ongridcellchanged=on_grid_cell_change):
-                    gui.GridColumn(align='right', name=u'qty', type='double:4,2', represent=u'%0.2f', 
+                    gui.GridColumn(align='right', name=u'qty', type='double', 
+                                   format="4,2", represent=u'%0.2f', 
                                    text=u'Cant.', width=50, )
                     gui.GridColumn(name=u'codigo', represent='%s', type='text', 
                                    text=u'C\xf3digo', width=75, )
                     gui.GridColumn(name=u'ds', represent='%s', type='text', 
                                    text=u'Descripci\xf3n', width=200, )
-                    gui.GridColumn(align='right', name=u'precio', type='double:11,2', 
-                                   represent=u'%0.2f', text=u'Precio', 
+                    gui.GridColumn(align='right', name=u'precio', type='double', 
+                                   format="11,2", represent=u'%0.2f', text=u'Precio', 
                                    width=125, )
                     gui.GridColumn(align='center', name=u'iva_id', represent='%s', 
-                                   text=u'IVA', width=50, 
-                                   type='choice:exento,no gravado,0%,10.5%,21%,27%', )
+                                   choices={1: "no gravado", 2: "exento", 
+                                            3: "0%", 4: "10.5%", 5: "21%" , 
+                                            6: "27%"},
+                                   text=u'IVA', type='choice', width=50, )
                     gui.GridColumn(align='right', name=u'subtotal', type='double:15,2', 
                                    represent=u'%0.2f', text=u'Subtotal', 
                                    width=125, )
@@ -291,12 +294,21 @@ with gui.Window(name='mywin',
                 with gui.GridView(name='grilla', height='102', 
                                   left='12', top='18', width='606', item_count=0, 
                                   sort_column=0, ):
-                    gui.GridColumn(name='tributo_id', text=u'id', width=25, type='number', )
-                    gui.GridColumn(name='impuesto', text=u'Impuesto', width=75, type='choice:nacional,provincial,municipal,interno,otro',)
-                    gui.GridColumn(name='desc', text=u'Descripci\xf3n', width=200, type='text', )
-                    gui.GridColumn(name='base_imp', text=u'Base Imp.', width=75, type='double:11,2',)
-                    gui.GridColumn(name='alic', text=u'Al\xedcuota', width=75, type='double:3,2',)
-                    gui.GridColumn(name='importe', text=u'Importe', width=125, type='double:15,2',)
+                    gui.GridColumn(name='tributo_id', text=u'id', width=25, 
+                                   type='number', )
+                    gui.GridColumn(name='impuesto', text=u'Impuesto', width=75,
+                                   choices={1: "nacional", 2: "provincial", 
+                                            3: "municipal", 4: "interno", 
+                                            99: "otro"},
+                                   type='choice', )
+                    gui.GridColumn(name='desc', text=u'Descripci\xf3n', 
+                                   width=200, type='text', )
+                    gui.GridColumn(name='base_imp', text=u'Base Imp.', 
+                                   width=75, type='double', format='11,2',)
+                    gui.GridColumn(name='alic', text=u'Al\xedcuota', width=75,
+                                   type='double', format='3,2',)
+                    gui.GridColumn(name='importe', text=u'Importe', width=125,
+                                   type='double', format='15,2',)
                 gui.Button(label=u'Agregar', name='agregar', left='6', 
                            top='127', width='85px', )
                 gui.Button(id=493, label=u'Borrar', name='borrar', 
@@ -371,9 +383,10 @@ panel = mywin['panel']
 # agrego item de ejemplo:
 new_key = 'my_key_%s' % time.time()
 panel['notebook']['tab_art']['items'].items.append({'qty': '1', 'codigo': '1111', 
-    'ds': u"Honorarios  p/administración  de alquileres", 'precio': 1000., 'iva_id': 21, 
+    'ds': u"Honorarios  p/administración  de alquileres", 'precio': 1000., 'iva_id': 5, 
     'subtotal': 1210.})
 
 if __name__ == "__main__":
     mywin.show()
     gui.main_loop()
+    print panel['notebook']['tab_art']['items'].items[0]
