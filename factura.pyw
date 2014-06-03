@@ -139,6 +139,13 @@ def on_grid_cell_change(evt):
         grid.items[evt.row]['ds'] = datos.articulos.get(value, "")
     recalcular()
 
+def on_agregar_click(evt):
+    grilla.items.append({'qty': 1, 'precio': 0., 'iva_id': 5})
+
+def on_borrar_click(evt):
+    if grilla.items:
+        del grilla.items[-1]
+
 def recalcular():
     neto_iva = {}
     imp_iva = {}
@@ -295,9 +302,9 @@ with gui.Window(name='mywin',
                                    represent=u'%0.2f', text=u'Subtotal', 
                                    width=75, format="15,2")
                 gui.Button(label=u'Agregar', name='agregar', left='6', 
-                           top='127', width='85px', )
+                           top='127', width='85px', onclick=on_agregar_click)
                 gui.Button(id=493, label=u'Borrar', name='borrar', 
-                           left='94', top='127', width='85px', )
+                           left='94', top='127', width='85px', onclick= on_borrar_click)
                 gui.Button(label=u'Modificar', name='modificar', left='183', 
                            top='128', width='85px', )
             with gui.TabPanel(name='alicuotas_iva', selected=False, 
