@@ -56,22 +56,26 @@ wsfev1.Conectar("", wsfev1_url)
 
 def on_tipo_doc_change(evt):
     ctrl = evt.target
+    value = ""
     if ctrl.value == 80:
         mask = '##-########-#'
+    elif ctrl.value == 99:
+        mask = '#'
+        value = "0"
+        on_nro_doc_change(evt)
     else:
         mask = '########'
-    ctrl.get_parent()['nro_doc'].text = ""
-    ctrl.get_parent()['nro_doc'].mask = mask
+    panel['cliente']['nro_doc'].mask = mask
+    panel['cliente']['nro_doc'].value = value
 
 def on_nro_doc_change(evt):
-    ctrl = evt.target
+    ctrl = panel['cliente']['nro_doc']
     doc_nro = ctrl.value
-    panel = ctrl.get_parent()
     if doc_nro:
         doc_nro = doc_nro.replace("-", "")
         if padron.Buscar(doc_nro):
-            panel['nombre'].value = padron.denominacion
-            panel['domicilio'].value = ""
+            panel['cliente']['nombre'].value = padron.denominacion
+            panel['cliente']['domicilio'].value = ""
             if padron.imp_iva in ('AC', 'S'):
                 cat_iva = "RI"
             elif padron.imp_iva == 'EX':
@@ -81,10 +85,10 @@ def on_nro_doc_change(evt):
             else:
                 cat_iva = "CF"
     else:
-        panel['nombre'] = ""
-        panel['domicilio'] = ""
+        panel['cliente']['nombre'] = ""
+        panel['cliente']['domicilio'] = ""
         cat_iva = None
-    panel['cat_iva'].value = cat_iva
+    panel['cliente']['cat_iva'].value = cat_iva
 
 def on_cat_iva_change(evt):
     ctrl = evt.target
@@ -196,7 +200,6 @@ def obtener_cae(evt):
     imp_tot_conc = panel['notebook']['alicuotas_iva']['imp_tot_conc'].value
     imp_total = panel['imp_total'].value
     fecha_venc_pago = panel['periodo']['fecha_venc_pago'].value.strftime("%Y%m%d")
-    # Fechas del período del servicio facturado (solo si concepto = 1?)
     fecha_serv_desde = panel['periodo']['fecha_desde'].value.strftime("%Y%m%d")
     fecha_serv_hasta = panel['periodo']['fecha_hasta'].value.strftime("%Y%m%d")
     moneda_id = 'PES'; moneda_ctz = '1.000'
