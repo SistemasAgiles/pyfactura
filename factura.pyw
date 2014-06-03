@@ -14,7 +14,6 @@ __version__ = "0.1a"
 # for more complete examples, see each control module
 
 import datetime     # base imports, used by some controls and event handlers
-from dateutil.relativedelta import relativedelta
 import decimal
 import time
 import sys
@@ -111,7 +110,8 @@ def on_tipo_cbte_change(evt):
 def on_load(evt):
     today = datetime.datetime.today()
     desde = today - datetime.timedelta(today.day - 1)
-    hasta = desde + relativedelta(months=1) - datetime.timedelta(1)
+    hasta = desde + datetime.timedelta(today.day + 31)
+    hasta = hasta -  datetime.timedelta(hasta.day)
     panel = evt.target['panel']
     panel['cliente']['nro_doc'].value = ""
     panel['cliente']['nombre'].value = ""
@@ -251,18 +251,18 @@ with gui.Window(name='mywin',
                     gui.GridColumn(name=u'codigo', represent='%s', type='text', 
                                    text=u'C\xf3digo', width=75, )
                     gui.GridColumn(name=u'ds', represent='%s', type='combo', 
-                                   text=u'Descripci\xf3n', width=200, )
+                                   text=u'Descripci\xf3n', width=275, )
                     gui.GridColumn(align='right', name=u'precio', type='double', 
                                    format="11,2", represent=u'%0.2f', text=u'Precio', 
-                                   width=125, )
+                                   width=75, )
                     gui.GridColumn(align='center', name=u'iva_id', represent='%s', 
                                    choices={1: "no gravado", 2: "exento", 
                                             3: "0%", 4: "10.5%", 5: "21%" , 
                                             6: "27%"},
                                    text=u'IVA', type='choice', width=50, )
-                    gui.GridColumn(align='right', name=u'subtotal', type='double:15,2', 
+                    gui.GridColumn(align='right', name=u'subtotal', type='double', 
                                    represent=u'%0.2f', text=u'Subtotal', 
-                                   width=125, )
+                                   width=75, format="15,2")
                 gui.Button(label=u'Agregar', name='agregar', left='6', 
                            top='127', width='85px', )
                 gui.Button(id=493, label=u'Borrar', name='borrar', 
