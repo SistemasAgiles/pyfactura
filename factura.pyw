@@ -250,7 +250,7 @@ with gui.Window(name='mywin',
                                    text=u'Cant.', width=50, )
                     gui.GridColumn(name=u'codigo', represent='%s', type='text', 
                                    text=u'C\xf3digo', width=75, )
-                    gui.GridColumn(name=u'ds', represent='%s', type='text', 
+                    gui.GridColumn(name=u'ds', represent='%s', type='combo', 
                                    text=u'Descripci\xf3n', width=200, )
                     gui.GridColumn(align='right', name=u'precio', type='double', 
                                    format="11,2", represent=u'%0.2f', text=u'Precio', 
@@ -386,6 +386,7 @@ panel = mywin['panel']
 
 # agrego item de ejemplo:
 new_key = 'my_key_%s' % time.time()
+panel['notebook']['tab_art']['items'].columns[2].choices = datos.articulos.values()
 panel['notebook']['tab_art']['items'].items.append({'qty': 1, 'codigo': '1111', 
     'ds': u"Honorarios  p/administración  de alquileres", 'precio': 1000., 'iva_id': 5, 
     'subtotal': 1210.})
