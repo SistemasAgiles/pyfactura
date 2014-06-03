@@ -288,7 +288,7 @@ def generar_pdf(evt):
     domicilio_cliente = panel['cliente']['domicilio'].value
     pais_dst_cmp = 200  # Argentina
     id_impositivo =  panel['cliente']['cat_iva'].text
-    forma_pago = ""  # '30 dias'
+    forma_pago = panel['conceptos']['forma_pago'].text
     incoterms = 'FOB'
     idioma_cbte = 1  # español
     motivo = panel['notebook']['obs']['afip'].value
@@ -410,7 +410,7 @@ with gui.Window(name='mywin',
             gui.TextBox(name='domicilio', multiline=True, 
                         height='57', left='112', top='49', width='189', 
                         value=u'Castagna 4942', )
-            gui.Label(name='label_530_167', left='321', top='89', 
+            gui.Label(name='label_530_167', left='321', top='85', 
                       width='58', text=u'E-Mail:', )
             gui.Label(name='label_530_167_1258', height='17', left='321', 
                       top='56', width='58', text=u'IVA:', )
@@ -453,9 +453,16 @@ with gui.Window(name='mywin',
             gui.CheckBox(label=u'Productos', name='productos', left='13', 
                          top='24', width='99', 
                          )
-            gui.CheckBox(label=u'Servicios', name='servicios', left='12', 
-                         top='49', width='110', value=True, 
+            gui.CheckBox(label=u'Servicios', name='servicios', left='132', 
+                         top='24', width='110', value=True, 
                          )
+            gui.Label(name='label_182_163', height='25', left='11', 
+                      top='55', width='42', text=u'Forma Pago:', )
+            gui.ComboBox(name='forma_pago', text=u'CF', 
+                         left='111', top='50', width='145',                          
+                         items=[u"Contado", u"Tarjeta de Débito",
+                                u"Tarjeta de Crédito", u"Cuenta Corriente",
+                                u"Cheque", u"Ticket", u"Otra"] )
         with gui.Panel(label=u'Per\xedodo Facturado', name='periodo', 
                        height='89', left='276', top='158', width='363', 
                        image='', ):
