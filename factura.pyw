@@ -129,6 +129,7 @@ def on_load(evt):
     panel['periodo']['fecha_hasta'].value = hasta
     panel['aut']['cae'].value = ""
     panel['aut']['fecha_vto_cae'].value = None
+    recalcular()
 
 def on_grid_cell_change(evt):
     grid = evt.target
@@ -136,12 +137,31 @@ def on_grid_cell_change(evt):
     col_name = grid.columns[evt.col].name
     if col_name == "codigo":
         grid.items[evt.row]['ds'] = datos.articulos.get(value, "")
-    qty = grid.items[evt.row]['qty']
-    precio = grid.items[evt.row]['precio']
-    for i, col in enumerate(grid.columns):
-        if i != evt.col and col.name == 'subtotal':
-            grid.items[evt.row][i] = qty * precio
+    recalcular()
 
+def recalcular():
+    
+    neto_iva = {}
+    imp_iva = {}
+    tasas_iva = {4: 10.5, 5: 21, 6: 27}
+    total = 0.
+    for it in grilla.items:
+        iva_id = it['iva_id']
+        qty = it['qty']
+        precio = it['precio']
+        subtotal = qty * precio
+        it['subtotal'] = subtotal
+        total += subtotal
+        neto_iva[iva_id] = neto_iva.get(iva_id, 0.) + subtotal
+        if iva_id in tasas_iva:
+            iva_liq = subtotal * tasas_iva[iva_id] / 100.
+            imp_iva[iva_id] = imp_iva.get(iva_id, 0.) + iva_liq
+            it['imp_iva'] = iva_liq
+    panel['notebook']['alicuotas_iva']['imp_tot_conc'].value = neto_iva.get(1, 0)
+    panel['notebook']['alicuotas_iva']['imp_op_ex'].value = neto_iva.get(2, 0)
+    panel['imp_iva'].value = sum(imp_iva.values(), 0.)
+    panel['imp_trib'].value = 0
+    panel['imp_total'].value = total + sum(imp_iva.values(), 0.)
 
 # --- gui2py designer generated code starts ---
 
@@ -288,14 +308,15 @@ with gui.Window(name='mywin',
                           text=u'Subtotales de IVA liquidado por al\xedcuota:', )
                 gui.Label(name='label_387_630', height='17', left='393', 
                           top='71', width='92', text=u'No Gravado:', )
-                gui.TextBox(name='imp_tot_conc', left='519', top='67', )
+                gui.TextBox(name='imp_tot_conc', left='519', top='67', 
+                            mask='#######.##', alignment='right', )
                 gui.Label(name='label_387_542', height='17', left='393', 
                           top='40', width='99', text=u'Neto Gravado:', )
-                gui.TextBox(name='imp_neto', 
+                gui.TextBox(name='imp_neto', mask='#######.##', alignment='right', 
                             left='519', top='36', width='92', )
                 gui.Label(name='label_387', left='395', top='100', 
                           text=u'Exento:', )
-                gui.TextBox(name='imp_op_ex',  
+                gui.TextBox(name='imp_op_ex',  mask='#######.##', alignment='right', 
                             left='519', top='97', width='92', )
             with gui.TabPanel(id=869, name='tributos', selected=False, 
                               text=u'Otros tributos', ):
@@ -387,13 +408,14 @@ with gui.Window(name='mywin',
 # obtener referencia a la ventana principal:
 mywin = gui.get("mywin")
 panel = mywin['panel']
+grilla = panel['notebook']['tab_art']['items']
 
 # agrego item de ejemplo:
 new_key = 'my_key_%s' % time.time()
-panel['notebook']['tab_art']['items'].columns[2].choices = datos.articulos.values()
-panel['notebook']['tab_art']['items'].items.append({'qty': 1, 'codigo': '1111', 
-    'ds': u"Honorarios  p/administración  de alquileres", 'precio': 1000., 'iva_id': 5, 
-    'subtotal': 1210.})
+grilla.columns[2].choices = datos.articulos.values()
+grilla.items.append({'qty': 1, 'codigo': '1111', 
+    'ds': u"Honorarios  p/administración  de alquileres", 'precio': 1000., 
+    'iva_id': 5, 'subtotal': 1210.})
 
 if __name__ == "__main__":
     mywin.show()
