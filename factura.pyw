@@ -285,7 +285,9 @@ def generar_pdf(evt):
     obs_generales = panel['notebook']['obs']['generales'].value
     obs_comerciales = panel['notebook']['obs']['comerciales'].value
     nombre_cliente = panel['cliente']['nombre'].value
-    domicilio_cliente = panel['cliente']['domicilio'].value
+    # dividir el domicilio en lineas y ubicar los campos
+    domicilio = panel['cliente']['domicilio'].value.split()
+    domicilio_cliente = domicilio[0]
     pais_dst_cmp = 200  # Argentina
     id_impositivo =  panel['cliente']['cat_iva'].text
     forma_pago = panel['conceptos']['forma_pago'].text
@@ -354,6 +356,11 @@ def generar_pdf(evt):
         fepdf.AgregarDato("iibb", "IIBB 30-00000000-0")
         fepdf.AgregarDato("iva", "IVA Responsable Inscripto")
         fepdf.AgregarDato("inicio", "Inicio de Actividad: 01/04/2006")
+
+    if len(domicilio) > 1:
+        fepdf.AgregarDato("Cliente.Localidad", domicilio[1])
+    if len(domicilio) > 2:
+        fepdf.AgregarDato("Cliente.Provincia", domicilio[2])
 
     fepdf.CrearPlantilla(papel=conf_fact.get("papel", "legal"), 
                          orientacion=conf_fact.get("orientacion", "portrait"))
