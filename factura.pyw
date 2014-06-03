@@ -8,7 +8,7 @@ from __future__ import with_statement   # for python 2.5 compatibility
 __author__ = "Mariano Reingart (reingart@gmail.com)"
 __copyright__ = "Copyright (C) 2014- Mariano Reingart"
 __license__ = "LGPL 3.0"
-__version__ = "0.1a"
+__version__ = "0.2a"
 
 # images were taken from Pythoncard's proof and widgets demos
 # for more complete examples, see each control module
@@ -235,9 +235,12 @@ def obtener_cae(evt):
         panel['aut']['cae'].value = wsfev1.CAE
         vto = datetime.datetime.strptime(wsfev1.Vencimiento, "%Y%m%d").date()
         panel['aut']['fecha_vto_cae'].value = vto
+        panel['notebook']['obs']['afip'].value = wsfev1.Obs
     except:
         print wsfev1.Excepcion, wsfev1.ErrMsg
         print wsfev1.XmlRequest, wsfev1.XmlResponse
+    panel['aut']['aceptado'].value = wsfev1.Resultado == "A"
+    panel['aut']['rechazado'].value = wsfev1.Resultado == "R"
     if wsfev1.Excepcion:
         gui.alert(wsfev1.Excepcion, u"Excepcion")
     if wsfev1.Obs:
@@ -249,7 +252,7 @@ def obtener_cae(evt):
 
 with gui.Window(name='mywin', 
                 title=u'Aplicativo Facturaci\xf3n Electr\xf3nica', 
-                resizable=True, height='596px', left='181', top='52', 
+                resizable=True, height='620px', left='181', top='52', 
                 width='653px', onload=on_load,
                 image='', ):
     with gui.MenuBar(name='menubar_83_155', ):
@@ -429,17 +432,22 @@ with gui.Window(name='mywin',
                            left='94', top='127', width='85px', )
                 gui.Button(label=u'Modificar', name='modificar', left='183', 
                            top='128', width='85px', )
-            with gui.TabPanel(name='tabpanel_638', selected=False, 
+            with gui.TabPanel(name='obs', selected=False, 
                               text=u'Observaciones', ):
-                gui.Label(name='label_1324', left='15', top='87', 
+                gui.Label(name='label_1324', left='15', top='65', 
                           text=u'Obs. Comerciales:', )
                 gui.Label(id=1938, name='label_1324_1938', height='17', left='14', 
-                          top='18', width='106', text=u'Obs. Generales:', )
-                gui.TextBox(name='obs_generales', multiline=True, 
-                            height='65', left='147', top='18', width='467', 
+                          top='15', width='106', text=u'Obs. Generales:', )
+                gui.Label(name='label_1325', left='15', top='110', 
+                          text=u'Obs. AFIP:', )
+                gui.TextBox(name='generales', multiline=True, 
+                            height='45', left='147', top='10', width='467', 
                             )
-                gui.TextBox(name='obs_comerciales', multiline=True, 
-                            height='65', left='147', top='87', width='468', 
+                gui.TextBox(name='comerciales', multiline=True, 
+                            height='45', left='147', top='60', width='468', 
+                            )
+                gui.TextBox(name='afip', multiline=True, 
+                            height='45', left='147', top='110', width='468', 
                             )
         with gui.Panel(label=u'Autorizaci\xf3n AFIP:', name='aut', 
                        height='121', left='15', top='449', width='320', 
