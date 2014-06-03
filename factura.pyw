@@ -62,7 +62,8 @@ fepdf.FmtCantidad = conf_fact.get("fmt_cantidad", "0.2")
 fepdf.FmtPrecio = conf_fact.get("fmt_precio", "0.2")
 # configuración general del PDF:
 fepdf.CUIT = cuit_emisor
-
+fepdf.AgregarCampo("draft", 'T', 100, 250, 0, 0,
+                   size=70, rotate=45, foreground=0x808080, priority=-1)
 
 # --- here go your event handlers ---
 
@@ -261,7 +262,7 @@ def obtener_cae(evt):
         gui.alert(wsfev1.ErrMsg, u"Mensajes Error AFIP")
 
 def generar_pdf(evt):
-    tipo_cbte = panel['tipo_cbte'].value
+    tipo_cbte = panel['tipo_cbte'].value or 6
     punto_vta = panel['pto_vta'].value
     cbte_nro = panel['nro_cbte'].value
     fecha_cbte =  panel['fecha_cbte'].value.strftime("%Y%m%d")
@@ -287,15 +288,16 @@ def generar_pdf(evt):
     nombre_cliente = panel['cliente']['nombre'].value
     # dividir el domicilio en lineas y ubicar los campos
     domicilio = panel['cliente']['domicilio'].value.split()
-    domicilio_cliente = domicilio[0]
+    domicilio_cliente = domicilio and domicilio[0] or ""
     pais_dst_cmp = 200  # Argentina
     id_impositivo =  panel['cliente']['cat_iva'].text
     forma_pago = panel['conceptos']['forma_pago'].text
     incoterms = 'FOB'
     idioma_cbte = 1  # español
     motivo = panel['notebook']['obs']['afip'].value
-    cae = panel['aut']['cae'].value
-    fch_venc_cae = panel['aut']['fecha_vto_cae'].value.strftime("%Y%m%d")
+    cae = panel['aut']['cae'].value or 0
+    vto = panel['aut']['fecha_vto_cae'].value
+    fch_venc_cae = vto and vto.strftime("%Y%m%d") or ""
     
     fepdf.CrearFactura(concepto, tipo_doc, nro_doc, tipo_cbte, punto_vta,
         cbte_nro, imp_total, imp_tot_conc, imp_neto,
@@ -364,6 +366,8 @@ def generar_pdf(evt):
 
     fepdf.CrearPlantilla(papel=conf_fact.get("papel", "legal"), 
                          orientacion=conf_fact.get("orientacion", "portrait"))
+    if True:
+        fepdf.AgregarDato("draft", u"BORRADOR")
     fepdf.ProcesarPlantilla(num_copias=int(conf_fact.get("copias", 1)),
                             lineas_max=int(conf_fact.get("lineas_max", 24)),
                             qty_pos=conf_fact.get("cant_pos") or 'izq')
