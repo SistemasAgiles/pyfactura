@@ -8,7 +8,7 @@ from __future__ import with_statement   # for python 2.5 compatibility
 __author__ = "Mariano Reingart (reingart@gmail.com)"
 __copyright__ = "Copyright (C) 2014- Mariano Reingart"
 __license__ = "LGPL 3.0"
-__version__ = "0.3a"
+__version__ = "0.4b"
 
 # images were taken from Pythoncard's proof and widgets demos
 # for more complete examples, see each control module
@@ -48,12 +48,12 @@ import datos
 padron = PadronAFIP()
 wsaa = WSAA()
 wsfev1 = WSFEv1()
-ta = wsaa.Autenticar("wsfe", cert, privatekey, wsaa_url)
+ta = wsaa.Autenticar("wsfe", cert, privatekey, wsaa_url, cache="cache")
 if not ta:
     sys.exit("Imposible autenticar con WSAA: %s" % wsaa.Excepcion)
 wsfev1.SetTicketAcceso(ta)
 wsfev1.Cuit = cuit_emisor
-wsfev1.Conectar("", wsfev1_url)
+wsfev1.Conectar("cache", wsfev1_url)
 fepdf = FEPDF()
 # cargo el formato CSV por defecto (factura.csv)
 fepdf.CargarFormato(conf_fact.get("formato", "factura.csv"))

@@ -99,8 +99,13 @@ if 'py2exe' in sys.argv:
         "C:\python25\MSVCR71.dll",
         "C:\python25\lib\site-packages\wx-2.8-msw-unicode\wx\gdiplus.dll",
         ]), 
-        #("plantillas", ["plantillas/logo.png", ]),
+        ("plantillas", ["plantillas/logo.png", "plantillas/factura.csv",]),
+        ("cache", glob.glob("cache/*")),
         #("datos", ["datos/facturas.csv", "datos/facturas.json", "datos/facturas.txt", ])
+        (".", [
+                "sistemas-agiles.png", "logo-pyafipws.png", "reingart.key", "reingart.crt",
+                "pyafipws/padron.db", 
+                ])
         ]
     data_files.append((".", pycard_resources))
 
