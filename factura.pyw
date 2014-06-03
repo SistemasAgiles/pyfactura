@@ -35,7 +35,7 @@ cert = "reingart.crt"
 privatekey = "reingart.key"
 wsaa_url = None
 wsfev1_url = None
-cuit_emisor = 2026756539
+cuit_emisor = 20267565393
 cat_iva_emisor = "RI"
 
 import datos
@@ -103,7 +103,11 @@ def on_tipo_cbte_change(evt):
     panel = evt.target.get_parent()
     tipo_cbte = panel['tipo_cbte'].value
     pto_vta = panel['pto_vta'].value
-    nro_cbte = wsfev1.CompUltimoAutorizado(tipo_cbte, pto_vta)
+    if tipo_cbte and pto_vta:
+        nro_cbte = wsfev1.CompUltimoAutorizado(tipo_cbte, pto_vta)
+        print wsfev1.Excepcion, wsfev1.ErrMsg
+    else:
+        nro_cbte = -1
     nro_cbte = int(nro_cbte) + 1
     panel['nro_cbte'].value = nro_cbte
 
