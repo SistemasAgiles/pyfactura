@@ -291,7 +291,7 @@ def generar_pdf(evt):
     forma_pago = ""  # '30 dias'
     incoterms = 'FOB'
     idioma_cbte = 1  # español
-    motivo = "11"    # 
+    motivo = panel['notebook']['obs']['afip'].value
     cae = panel['aut']['cae'].value
     fch_venc_cae = panel['aut']['fecha_vto_cae'].value.strftime("%Y%m%d")
     
@@ -342,7 +342,7 @@ def generar_pdf(evt):
                 precio, bonif, iva_id, imp_iva, subtotal, despacho)
 
     if True:
-        fepdf.AgregarDato("logo", "logo-pyafipws.png")
+        fepdf.AgregarDato("logo", "sistemas-agiles.png")
 
     fepdf.CrearPlantilla(papel=conf_fact.get("papel", "legal"), 
                          orientacion=conf_fact.get("orientacion", "portrait"))
