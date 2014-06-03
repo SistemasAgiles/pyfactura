@@ -347,6 +347,13 @@ def generar_pdf(evt):
 
     if True:
         fepdf.AgregarDato("logo", "sistemas-agiles.png")
+        fepdf.AgregarDato("empresa", "Empresa de Prueba")
+        fepdf.AgregarDato("mebrete1", "Direccion de Prueba")
+        fepdf.AgregarDato("membrete2", "Capital Federal")
+        fepdf.AgregarDato("cuit", "CUIT 30-00000000-0")
+        fepdf.AgregarDato("iibb", "IIBB 30-00000000-0")
+        fepdf.AgregarDato("iva", "IVA Responsable Inscripto")
+        fepdf.AgregarDato("inicio", "Inicio de Actividad: 01/04/2006")
 
     fepdf.CrearPlantilla(papel=conf_fact.get("papel", "legal"), 
                          orientacion=conf_fact.get("orientacion", "portrait"))
