@@ -417,7 +417,8 @@ with gui.Window(name='mywin',
             gui.ComboBox(name='tipo_doc', text=u'CF', 
                          left='111', top='16', width='78', 
                          value=80, onchange=on_tipo_doc_change,
-                         items={80: u'CUIT', 96: u'DNI', 99: u'CF'}, )
+                         items={80: u'CUIT', 96: u'DNI', 99: u'CF', 
+                                91: "CI Extranjera", 94: "Pasaporte"}, )
             gui.TextBox(mask='##-########-#', name='nro_doc', 
                         left='192', top='17', width='110', 
                         value=u'20-26756539-3', onblur=on_nro_doc_change,
