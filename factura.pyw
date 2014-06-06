@@ -663,7 +663,9 @@ grilla = panel['notebook']['tab_art']['items']
 # agrego item de ejemplo:
 new_key = 'my_key_%s' % time.time()
 grilla.columns[2].choices = datos.articulos.values()
-grilla.items.append({'qty': 1, 'codigo': '1111', 
+
+if '--prueba' in sys.argv:
+    grilla.items.append({'qty': 1, 'codigo': '1111', 
     'ds': u"Honorarios  p/administración  de alquileres", 'precio': 1000., 
     'iva_id': 5, 'subtotal': 1210.})
 
