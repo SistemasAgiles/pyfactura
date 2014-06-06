@@ -85,12 +85,15 @@ def on_nro_doc_change(evt):
     ctrl = panel['cliente']['nro_doc']
     doc_nro = ctrl.value
     tipo_doc = panel['cliente']['tipo_doc'].value
+    cat_iva = None
     if doc_nro:
         doc_nro = doc_nro.replace("-", "")
         if padron.Buscar(doc_nro, tipo_doc):
             panel['cliente']['nombre'].value = padron.denominacion
             panel['cliente']['domicilio'].value = ""
-            if padron.imp_iva in ('AC', 'S'):
+            if padron.cat_iva:
+                cat_iva = int(padron.cat_iva)
+            elif padron.imp_iva in ('AC', 'S'):
                 cat_iva = 1  # RI
             elif padron.imp_iva == 'EX':
                 cat_iva = 4  # EX
@@ -101,11 +104,11 @@ def on_nro_doc_change(evt):
             padron.ConsultarDomicilios(doc_nro, tipo_doc)
             for domicilio in padron.domicilios:
                 panel['cliente']['domicilio'].value = domicilio
-                break
+            panel['cliente']['email'].value = padron.email or ""
     else:
-        panel['cliente']['nombre'] = ""
-        panel['cliente']['domicilio'] = ""
-        cat_iva = None
+        panel['cliente']['nombre'].value = ""
+        panel['cliente']['domicilio'].value = ""
+        panel['cliente']['email'].value = ""
     panel['cliente']['cat_iva'].value = cat_iva
 
 def on_cat_iva_change(evt):
@@ -402,6 +405,19 @@ def generar_pdf(evt):
     fepdf.MostrarPDF(archivo=salida,imprimir='--imprimir' in sys.argv)
 
 
+def guardar(evt):
+    tipo_doc = panel['cliente']['tipo_doc'].value
+    nro_doc = panel['cliente']['nro_doc'].value.replace("-", "")
+    denominacion = panel['cliente']['nombre'].value
+    direccion = panel['cliente']['domicilio'].value
+    cat_iva =  panel['cliente']['cat_iva'].value or None
+    email = panel['cliente']['email'].value
+    if all([tipo_doc, nro_doc, denominacion]):
+        padron.Guardar(tipo_doc, nro_doc, denominacion, cat_iva, direccion, email)
+    else:
+        gui.alert(u"Información del cliente incompleta", "Imposible Guardar")
+
+
 # --- gui2py designer generated code starts ---
 
 with gui.Window(name='mywin', 
@@ -444,7 +460,7 @@ with gui.Window(name='mywin',
                       top='56', width='58', text=u'IVA:', )
             gui.ComboBox(name='cat_iva', text=u'Responsable Inscripto', 
                          left='383', top='49', width='190', readonly=True,
-                         value=1, onchange=on_cat_iva_change,
+                         onchange=on_cat_iva_change,
                          items={1: "Responsable Inscripto", 4: "Exento", 
                                 5: "Consumidor Final", 6: "Monotributo",
                                 8: "Proveedor del Exterior",
@@ -660,8 +676,10 @@ with gui.Window(name='mywin',
                     left='520', top='515', width='115', value=1000.0, )
         gui.Image(name='image_507_571', height='36', left='394', top='600', 
                   width='238', filename='sistemas-agiles.png', )
-        gui.Image(name='image_33_540', height='50', left='350', top='495', 
+        gui.Image(name='image_33_540', height='50', left='350', top='490', 
                   width='100', filename='logo-pyafipws.png', )
+        gui.Button(label=u'Guardar', name=u'guardar', 
+                   left='350', top='540', width='75', onclick=guardar)
 
 # --- gui2py designer generated code ends ---
 
