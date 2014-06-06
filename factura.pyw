@@ -38,7 +38,7 @@ privatekey = "reingart.key"
 wsaa_url = None
 wsfev1_url = None
 cuit_emisor = 20267565393
-cat_iva_emisor = "RI"
+cat_iva_emisor = 1 # RI
 conf_fact = {}
 
 import datos
@@ -91,13 +91,13 @@ def on_nro_doc_change(evt):
             panel['cliente']['nombre'].value = padron.denominacion
             panel['cliente']['domicilio'].value = ""
             if padron.imp_iva in ('AC', 'S'):
-                cat_iva = "RI"
+                cat_iva = 1  # RI
             elif padron.imp_iva == 'EX':
-                cat_iva = "EX"
+                cat_iva = 4  # EX
             elif padron.monotributo:
-                cat_iva = "MT"
+                cat_iva = 6  # MT
             else:
-                cat_iva = "CF"
+                cat_iva = 5  # CF
             padron.ConsultarDomicilios(doc_nro, tipo_doc)
             for domicilio in padron.domicilios:
                 panel['cliente']['domicilio'].value = domicilio
@@ -112,8 +112,8 @@ def on_cat_iva_change(evt):
     ctrl = evt.target
     panel = ctrl.get_parent().get_parent()
     cat_iva = ctrl.value
-    if cat_iva_emisor == "RI":
-        if cat_iva == "RI":
+    if cat_iva_emisor == 1:
+        if cat_iva == 1:
             tipo_cbte = 1  # factura A
         else:
             tipo_cbte = 6  # factura B
@@ -444,10 +444,16 @@ with gui.Window(name='mywin',
                       top='56', width='58', text=u'IVA:', )
             gui.ComboBox(name='cat_iva', text=u'Responsable Inscripto', 
                          left='383', top='49', width='190', readonly=True,
-                         value='RI', onchange=on_cat_iva_change,
-                         items={'CF': u'Consumidor Final', 
-                                'RI': u'Responsable Inscripto', 
-                                'EX': u'Exento', 'MT': u'Monotributo'}, 
+                         value=1, onchange=on_cat_iva_change,
+                         items={1: "Responsable Inscripto", 4: "Exento", 
+                                5: "Consumidor Final", 6: "Monotributo",
+                                8: "Proveedor del Exterior",
+                                9: "Cliente del Exterior",
+                                10: "IVA Liberado - Ley Nº 19.640",
+                                12: "Pequeño Contribuyente Eventual",
+                                13: "Monotributista Social",
+                                14: "Pequeño Contribuyente Eventual Social",
+                                15: "IVA No Alcanzado"}, 
                          )
             gui.TextBox(name='email', left='383', top='82', 
                         width='240', value=u'reingart@gmail.com', )
