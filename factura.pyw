@@ -8,7 +8,7 @@ from __future__ import with_statement   # for python 2.5 compatibility
 __author__ = "Mariano Reingart (reingart@gmail.com)"
 __copyright__ = "Copyright (C) 2014- Mariano Reingart"
 __license__ = "LGPL 3.0"
-__version__ = "0.4b"
+__version__ = "0.5a"
 
 # images were taken from Pythoncard's proof and widgets demos
 # for more complete examples, see each control module
@@ -84,9 +84,10 @@ def on_tipo_doc_change(evt):
 def on_nro_doc_change(evt):
     ctrl = panel['cliente']['nro_doc']
     doc_nro = ctrl.value
+    tipo_doc = panel['cliente']['tipo_doc'].value
     if doc_nro:
         doc_nro = doc_nro.replace("-", "")
-        if padron.Buscar(doc_nro):
+        if padron.Buscar(doc_nro, tipo_doc):
             panel['cliente']['nombre'].value = padron.denominacion
             panel['cliente']['domicilio'].value = ""
             if padron.imp_iva in ('AC', 'S'):
@@ -97,6 +98,10 @@ def on_nro_doc_change(evt):
                 cat_iva = "MT"
             else:
                 cat_iva = "CF"
+            padron.ConsultarDomicilios(doc_nro, tipo_doc)
+            for domicilio in padron.domicilios:
+                panel['cliente']['domicilio'].value = domicilio
+                break
     else:
         panel['cliente']['nombre'] = ""
         panel['cliente']['domicilio'] = ""
