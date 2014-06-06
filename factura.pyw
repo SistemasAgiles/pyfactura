@@ -481,8 +481,8 @@ with gui.Window(name='mywin',
                          )
             gui.Label(name='label_182_163', height='25', left='11', 
                       top='55', width='42', text=u'Forma Pago:', )
-            gui.ComboBox(name='forma_pago', text=u'CF', 
-                         left='111', top='50', width='145',                          
+            gui.ComboBox(name='forma_pago', value=u'Contado', 
+                         left='111', top='50', width='145', 
                          items=[u"Contado", u"Tarjeta de Débito",
                                 u"Tarjeta de Crédito", u"Cuenta Corriente",
                                 u"Cheque", u"Ticket", u"Otra"] )
