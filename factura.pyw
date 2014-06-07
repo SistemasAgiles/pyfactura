@@ -17,6 +17,7 @@ import datetime     # base imports, used by some controls and event handlers
 import decimal
 import os
 import time
+import traceback
 import sys
 from ConfigParser import SafeConfigParser
 
@@ -783,90 +784,95 @@ if '--prueba' in sys.argv:
     'iva_id': 5, 'subtotal': 1210.})
 
 if __name__ == "__main__":
-
-    if len(sys.argv)>1 and not sys.argv[1].startswith("-"):
-        CONFIG_FILE = sys.argv[1]
-    config = SafeConfigParser()
-    config.read(CONFIG_FILE)
-    if not len(config.sections()):
-        if os.path.exists(CONFIG_FILE):
-            gui.alert(u"Error al cargar configuración: %s" % CONFIG_FILE)
-        else:
-            gui.alert(u"No existe archivo de configuración: %s" % CONFIG_FILE)
-        sys.exit(1)
-    cert = config.get('WSAA','CERT')
-    privatekey = config.get('WSAA','PRIVATEKEY')
-    cuit_emisor = config.get('WSFEv1','CUIT')
-    cat_iva_emisor = int(config.get('WSFEv1','CAT_IVA') or 1) # RI
-    
-    if config.has_section('FACTURA'):
-        conf_fact = dict(config.items('FACTURA'))
-    else:
-        conf_fact = {}
-    
-    conf_pdf = dict(config.items('PDF'))
-    conf_mail = dict(config.items('MAIL'))
-      
-    if config.has_option('WSAA','URL') and not HOMO:
-        wsaa_url = config.get('WSAA','URL')
-    else:
-        wsaa_url = None
-
-    if config.has_option('WSFEv1','URL') and not HOMO:
-        wsfev1_url = config.get('WSFEv1','URL')
-    else:
-        wsfev1_url = None
-
-    if config.has_option('WSFEXv1','URL') and not HOMO:
-        wsfexv1_url = config.get('WSFEXv1','URL')
-    else:
-        wsfexv1_url = None
-
-    DEFAULT_WEBSERVICE = "wsfev1"
-    if config.has_section('PYRECE'):
-        DEFAULT_WEBSERVICE = config.get('PYRECE','WEBSERVICE')
-
-    if config.has_section('PROXY'):
-        proxy_dict = dict(("proxy_%s" % k,v) for k,v in config.items('PROXY'))
-        proxy_dict['proxy_port'] = int(proxy_dict['proxy_port'])
-    else:
-        proxy_dict = {}
-
-    id_factura = None
-
-    import datos
-
-    # inicializo los componenetes de negocio:
-
-    padron = PadronAFIP()
-    rg1361 = RG1361AFIP()
-    wsaa = WSAA()
-    wsfev1 = WSFEv1()
-    ta = wsaa.Autenticar("wsfe", cert, privatekey, wsaa_url, cache="cache")
-    if not ta:
-        sys.exit("Imposible autenticar con WSAA: %s" % wsaa.Excepcion)
-    wsfev1.SetTicketAcceso(ta)
-    wsfev1.Cuit = cuit_emisor
-    wsfev1.Conectar("cache", wsfev1_url)
-    fepdf = FEPDF()
-    # cargo el formato CSV por defecto (factura.csv)
-    fepdf.CargarFormato(conf_fact.get("formato", "factura.csv"))
-    # establezco formatos (cantidad de decimales) según configuración:
-    fepdf.FmtCantidad = conf_fact.get("fmt_cantidad", "0.2")
-    fepdf.FmtPrecio = conf_fact.get("fmt_precio", "0.2")
-    # configuración general del PDF:
-    fepdf.CUIT = cuit_emisor
-    
-    fepdf.AgregarCampo("draft", 'T', 100, 250, 0, 0,
-                       size=70, rotate=45, foreground=0x808080, priority=-1)
+    try:
+        if len(sys.argv)>1 and not sys.argv[1].startswith("-"):
+            CONFIG_FILE = sys.argv[1]
+        config = SafeConfigParser()
+        config.read(CONFIG_FILE)
+        if not len(config.sections()):
+            if os.path.exists(CONFIG_FILE):
+                gui.alert(u"Error al cargar configuración: %s" % CONFIG_FILE)
+            else:
+                gui.alert(u"No existe archivo de configuración: %s" % CONFIG_FILE)
+            sys.exit(1)
+        cert = config.get('WSAA','CERT')
+        privatekey = config.get('WSAA','PRIVATEKEY')
+        cuit_emisor = config.get('WSFEv1','CUIT')
+        cat_iva_emisor = int(config.get('WSFEv1','CAT_IVA') or 1) # RI
         
-    # ajustar opciones de articulos:
-    if config.has_section('ARTICULOS'):
-        for k,v in config.items('ARTICULOS'):
-            grilla.columns[2].choices = datos.articulos.append(v)
-    else:
-        import datos
-        grilla.columns[2].choices = datos.articulos.values()
+        if config.has_section('FACTURA'):
+            conf_fact = dict(config.items('FACTURA'))
+        else:
+            conf_fact = {}
+        
+        conf_pdf = dict(config.items('PDF'))
+        conf_mail = dict(config.items('MAIL'))
+          
+        if config.has_option('WSAA','URL') and not HOMO:
+            wsaa_url = config.get('WSAA','URL')
+        else:
+            wsaa_url = None
 
-    mywin.show()
-    gui.main_loop()
+        if config.has_option('WSFEv1','URL') and not HOMO:
+            wsfev1_url = config.get('WSFEv1','URL')
+        else:
+            wsfev1_url = None
+
+        if config.has_option('WSFEXv1','URL') and not HOMO:
+            wsfexv1_url = config.get('WSFEXv1','URL')
+        else:
+            wsfexv1_url = None
+
+        DEFAULT_WEBSERVICE = "wsfev1"
+        if config.has_section('PYRECE'):
+            DEFAULT_WEBSERVICE = config.get('PYRECE','WEBSERVICE')
+
+        if config.has_section('PROXY'):
+            proxy_dict = dict(("proxy_%s" % k,v) for k,v in config.items('PROXY'))
+            proxy_dict['proxy_port'] = int(proxy_dict['proxy_port'])
+        else:
+            proxy_dict = {}
+
+        id_factura = None
+
+        import datos
+
+        # inicializo los componenetes de negocio:
+
+        padron = PadronAFIP()
+        rg1361 = RG1361AFIP()
+        wsaa = WSAA()
+        wsfev1 = WSFEv1()
+        ta = wsaa.Autenticar("wsfe", cert, privatekey, wsaa_url, cache="cache")
+        if not ta:
+            sys.exit("Imposible autenticar con WSAA: %s" % wsaa.Excepcion)
+        wsfev1.SetTicketAcceso(ta)
+        wsfev1.Cuit = cuit_emisor
+        wsfev1.Conectar("cache", wsfev1_url)
+        fepdf = FEPDF()
+        # cargo el formato CSV por defecto (factura.csv)
+        fepdf.CargarFormato(conf_fact.get("formato", "factura.csv"))
+        # establezco formatos (cantidad de decimales) según configuración:
+        fepdf.FmtCantidad = conf_fact.get("fmt_cantidad", "0.2")
+        fepdf.FmtPrecio = conf_fact.get("fmt_precio", "0.2")
+        # configuración general del PDF:
+        fepdf.CUIT = cuit_emisor
+        
+        fepdf.AgregarCampo("draft", 'T', 100, 250, 0, 0,
+                           size=70, rotate=45, foreground=0x808080, priority=-1)
+            
+        # ajustar opciones de articulos:
+        if config.has_section('ARTICULOS'):
+            for k,v in config.items('ARTICULOS'):
+                grilla.columns[2].choices = datos.articulos.append(v)
+        else:
+            import datos
+            grilla.columns[2].choices = datos.articulos.values()
+
+        mywin.show()
+        gui.main_loop()
+    except:
+        ex = traceback.format_exception(sys.exc_type, sys.exc_value, sys.exc_traceback)
+        msg = ''.join(ex)
+        print msg
+        gui.alert(msg, 'Excepcion')
