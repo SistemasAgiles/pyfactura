@@ -505,11 +505,11 @@ def cargar(evt):
 
 # --- gui2py designer generated code starts ---
 
-with gui.Window(name='mywin', 
+with gui.Window(name='mywin', visible=False,
                 title=u'Aplicativo Facturaci\xf3n Electr\xf3nica', 
                 resizable=True, height='620px', left='181', top='52', 
-                width='653px', onload=limpiar,
-                image='', ):
+                width='653px',
+                image='', onload=limpiar):
     with gui.MenuBar(name='menubar_83_155', ):
         with gui.Menu(name='menu_114', ):
             gui.MenuItemSeparator(name='menuitemseparator_130', )
