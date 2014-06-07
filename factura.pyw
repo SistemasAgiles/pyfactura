@@ -94,8 +94,12 @@ def on_nro_doc_change(evt):
         if padron.Buscar(doc_nro, tipo_doc):
             panel['cliente']['nombre'].value = padron.denominacion
             panel['cliente']['domicilio'].value = ""
-            if padron.cat_iva:
+            try:
                 cat_iva = int(padron.cat_iva)
+            except ValueError:
+                cat_iva = None
+            if cat_iva:
+                pass
             elif padron.imp_iva in ('AC', 'S'):
                 cat_iva = 1  # RI
             elif padron.imp_iva == 'EX':
@@ -141,7 +145,7 @@ def on_tipo_cbte_change(evt):
 
 def limpiar(evt, confirmar=False):
     if confirmar:
-        if not gui.confirm("¿Se perderán todos los campos?", "Limpiar"):
+        if not gui.confirm(u"¿Se perderán todos los campos?", "Limpiar"):
             return
     today = datetime.datetime.today()
     desde = today - datetime.timedelta(today.day - 1)
@@ -510,15 +514,15 @@ with gui.Window(name='mywin',
             gui.ComboBox(name='cat_iva', text=u'Responsable Inscripto', 
                          left='383', top='49', width='190', editable=False,
                          onchange=on_cat_iva_change,
-                         items={1: "Responsable Inscripto", 4: "Exento", 
-                                5: "Consumidor Final", 6: "Monotributo",
-                                8: "Proveedor del Exterior",
-                                9: "Cliente del Exterior",
-                                10: "IVA Liberado - Ley Nº 19.640",
-                                12: "Pequeño Contribuyente Eventual",
-                                13: "Monotributista Social",
-                                14: "Pequeño Contribuyente Eventual Social",
-                                15: "IVA No Alcanzado"}, 
+                         items={1: u"Responsable Inscripto", 4: u"Exento", 
+                                5: u"Consumidor Final", 6: u"Monotributo",
+                                8: u"Proveedor del Exterior",
+                                9: u"Cliente del Exterior",
+                                10: u"IVA Liberado - Ley Nº 19.640",
+                                12: u"Pequeño Contribuyente Eventual",
+                                13: u"Monotributista Social",
+                                14: u"Pequeño Contribuyente Eventual Social",
+                                15: u"IVA No Alcanzado"}, 
                          )
             gui.TextBox(name='email', left='383', top='82', 
                         width='240', value=u'reingart@gmail.com', )
@@ -629,7 +633,7 @@ with gui.Window(name='mywin',
                           text=u'Subtotales de IVA liquidado por al\xedcuota:', )
                 gui.Label(name='label_387_630', height='17', left='393', 
                           top='71', width='92', text=u'No Gravado:', )
-                gui.TextBox(name='imp_tot_conc', left='519', top='67', 
+                gui.TextBox(name='imp_tot_conc', left='519', top='67', width='92',
                             mask='#######.##', alignment='right', editable=False)
                 gui.Label(name='label_387_542', height='17', left='393', 
                           top='40', width='99', text=u'Neto Gravado:', )
@@ -751,4 +755,3 @@ if '--prueba' in sys.argv:
 if __name__ == "__main__":
     mywin.show()
     gui.main_loop()
-    print panel['notebook']['tab_art']['items'].items[0]
