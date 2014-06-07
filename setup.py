@@ -27,8 +27,8 @@ long_desc = "Aplicativo visual para generación Facturas Electrónicas AFIP"
             
 data_files = [
     (".", ["licencia.txt", "sistemas-agiles.png", "logo-pyafipws.png"]),
-    #("conf", ["conf/rece.ini", "conf/geotrust.crt", "conf/afip_ca_info.crt", ]),
-    #("cache", glob.glob("cache/*")),
+    ("conf", ["conf/rece.ini", "conf/geotrust.crt", "conf/afip_ca_info.crt", ]),
+    ("cache", glob.glob("cache/*")),
     ]
 
 HOMO = True
@@ -99,7 +99,7 @@ if 'py2exe' in sys.argv:
         "C:\python25\MSVCR71.dll",
         "C:\python25\lib\site-packages\wx-2.8-msw-unicode\wx\gdiplus.dll",
         ]), 
-        ("plantillas", ["plantillas/logo.png", "plantillas/factura.csv",]),
+        ("plantillas", ["plantillas/logo.png", "plantillas/factura.csv", "plantillas/recibo.csv",]),
         ("cache", glob.glob("cache/*")),
         #("datos", ["datos/facturas.csv", "datos/facturas.json", "datos/facturas.txt", ])
         (".", [
