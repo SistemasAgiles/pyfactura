@@ -470,6 +470,60 @@ def grabar(evt):
     else:
         gui.alert(u"Información del cliente incompleta", "Imposible Guardar")
 
+def cargar(evt):
+    rg1361.ObtenerFactura()
+    f = rg1361.factura
+    cdate = lambda s: datetime.datetime.strptime(s, "%Y%m%d").date() if s else None
+    panel['tipo_cbte'].value = f["tipo_cbte"]
+    panel['pto_vta'].value = f["punto_vta"]
+    panel['nro_cbte'].value = f["cbte_nro"]
+    panel['fecha_cbte'].value = cdate(f["fecha_cbte"])
+    panel['conceptos']['productos'].value = f["concepto"] & 1
+    panel['conceptos']['servicios'].value = f["concepto"] & 2
+    panel['cliente']['tipo_doc'].value = f["tipo_doc"]
+    nro_doc = str(f["nro_doc"])
+    if f["tipo_doc"] == 80 and len(nro_doc) == 11:
+        nro_doc = "%2s-%6s-%1s" % (nro_doc[0:2], nro_doc[2:10], nro_doc[10:])
+    panel['cliente']['nro_doc'].value = nro_doc
+    panel['notebook']['alicuotas_iva']['imp_neto'].value = float(f["imp_neto"])
+    panel['imp_iva'].value = float(f["imp_iva"])
+    panel['imp_trib'].value = float(f["imp_trib"])
+    panel['notebook']['alicuotas_iva']['imp_op_ex'].value = float(f["imp_op_ex"])
+    panel['notebook']['alicuotas_iva']['imp_tot_conc'].value = float(f["imp_tot_conc"])
+    panel['imp_total'].value = float(f["imp_total"])
+    panel['periodo']['fecha_venc_pago'].value = f["fecha_venc_pago"]
+    panel['periodo']['fecha_desde'].value = cdate(f["fecha_serv_desde"])
+    panel['periodo']['fecha_hasta'].value = cdate(f["fecha_serv_hasta"])
+    panel['notebook']['obs']['generales'].value = f["obs_generales"]
+    panel['notebook']['obs']['comerciales'].value = f["obs_comerciales"]
+    panel['cliente']['nombre'].value = f["nombre_cliente"]
+    panel['cliente']['email'].value = f["email"]
+    panel['cliente']['cat_iva'].value = f["cat_iva"] or None 
+    # dividir el domicilio en lineas y ubicar los campos
+    panel['cliente']['domicilio'].value = f["domicilio_cliente"]
+    panel['conceptos']['forma_pago'].text = f["forma_pago"]
+    panel['notebook']['obs']['afip'].value = f.get("motivo_obs") or ""
+    panel['aut']['cae'].value = f.get("cae") or ""
+    panel['aut']['fecha_vto_cae'].value = cdate(f.get("fecha_vto"))
+
+    listado = panel['notebook']['alicuotas_iva']['listado']
+    listado.items.clear()
+    # TODO: ajustar gui2py para soportar decimal...
+    #for it in f.get("ivas", []):
+    #    listado.items[str(it['iva_id'])] = {'iva_id': it['iva_id'], 
+    #                                   'importe': it['importe'],
+    #                                   'base_imp': it["base_imp"],
+    #                                   'alicuota': it.get("alicuota")}
+    grilla.items.clear()
+    for it in f.get("detalles", []):
+        for k, v in it.items():
+            if isinstance(v, decimal.Decimal):
+                it[k] = round(float(v), 2)
+        grilla.items.append(it)
+
+    recalcular()
+    habilitar(False)
+
 
 # --- gui2py designer generated code starts ---
 
@@ -733,6 +787,8 @@ with gui.Window(name='mywin',
                    left='350', top='540', width='75', onclick=grabar)
         gui.Button(label=u'Limpiar', name=u'limpiar', left='430', top='540', 
                    width='75', onclick=lambda evt: limpiar(evt, True))
+        gui.Button(label=u'Cargar', name=u'cargar', left='510', top='540', 
+                   width='75', onclick=cargar)
 
 
 # --- gui2py designer generated code ends ---
