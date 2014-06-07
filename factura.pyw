@@ -169,6 +169,10 @@ def habilitar(valor=True):
     panel['conceptos'].enabled = valor
     panel['periodo'].enabled = valor
     panel['grabar'].enabled = valor
+    panel['notebook']['tab_art'].enabled = valor
+    panel['notebook']['alicuotas_iva'].enabled = valor
+    panel['notebook']['tributos'].enabled = valor
+    panel['notebook']['obs'].enabled = valor
     panel['aut']['obtener'].enabled = not valor
     panel['aut']['imprimir'].enabled = False
 
@@ -604,7 +608,7 @@ with gui.Window(name='mywin',
                 gui.Button(id=493, label=u'Borrar', name='borrar', 
                            left='94', top='127', width='85px', onclick= on_borrar_click)
                 gui.Button(label=u'Modificar', name='modificar', left='183', 
-                           top='128', width='85px', )
+                           top='128', width='85px', visible=False)
             with gui.TabPanel(name='alicuotas_iva', selected=False, 
                               text=u'Al\xedcuotas IVA', ):
                 with gui.ListView(name='listado', height='100', 
@@ -624,15 +628,15 @@ with gui.Window(name='mywin',
                 gui.Label(name='label_387_630', height='17', left='393', 
                           top='71', width='92', text=u'No Gravado:', )
                 gui.TextBox(name='imp_tot_conc', left='519', top='67', 
-                            mask='#######.##', alignment='right', )
+                            mask='#######.##', alignment='right', editable=False)
                 gui.Label(name='label_387_542', height='17', left='393', 
                           top='40', width='99', text=u'Neto Gravado:', )
                 gui.TextBox(name='imp_neto', mask='#######.##', alignment='right', 
-                            left='519', top='36', width='92', )
+                            left='519', top='36', width='92', editable=False)
                 gui.Label(name='label_387', left='395', top='100', 
                           text=u'Exento:', )
                 gui.TextBox(name='imp_op_ex',  mask='#######.##', alignment='right', 
-                            left='519', top='97', width='92', )
+                            left='519', top='97', width='92', editable=False)
             with gui.TabPanel(id=869, name='tributos', selected=False, 
                               text=u'Otros tributos', ):
                 with gui.GridView(name='grilla', height='102', 
@@ -658,7 +662,7 @@ with gui.Window(name='mywin',
                 gui.Button(id=493, label=u'Borrar', name='borrar', 
                            left='94', top='127', width='85px', )
                 gui.Button(label=u'Modificar', name='modificar', left='183', 
-                           top='128', width='85px', )
+                           top='128', width='85px', visible=False)
             with gui.TabPanel(name='obs', selected=False, 
                               text=u'Observaciones', ):
                 gui.Label(name='label_1324', left='15', top='65', 
