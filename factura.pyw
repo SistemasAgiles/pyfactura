@@ -158,6 +158,19 @@ def on_load(evt):
     panel['aut']['cae'].value = ""
     panel['aut']['fecha_vto_cae'].value = None
     recalcular()
+    habilitar(True)
+
+def habilitar(valor=True):
+    panel['tipo_cbte'].enabled = valor
+    panel['pto_vta'].enabled = valor
+    panel['nro_cbte'].enabled = valor
+    panel['fecha_cbte'].enabled = valor
+    panel['cliente'].enabled = valor
+    panel['conceptos'].enabled = valor
+    panel['periodo'].enabled = valor
+    panel['grabar'].enabled = valor
+    panel['aut']['obtener'].enabled = not valor
+    panel['aut']['imprimir'].enabled = False
 
 def on_grid_cell_change(evt):
     grid = evt.target
@@ -285,6 +298,8 @@ def obtener_cae(evt):
     rg1361.EstablecerParametro("err_msg", wsfev1.ErrMsg)
     rg1361.ActualizarFactura(id_factura)
 
+    if wsfev1.Resultado == "A":
+        panel['aut']['imprimir'].enabled = True
 
 def crear_factura(comp):
     tipo_cbte = panel['tipo_cbte'].value or 6
@@ -439,11 +454,11 @@ def grabar(evt):
     email = panel['cliente']['email'].value
     if all([tipo_doc, nro_doc, denominacion]):
         padron.Guardar(tipo_doc, nro_doc, denominacion, cat_iva, direccion, email)
+        crear_factura(rg1361)
+        id_factura = rg1361.GuardarFactura()
+        habilitar(False)
     else:
         gui.alert(u"Información del cliente incompleta", "Imposible Guardar")
-    crear_factura(rg1361)
-    id_factura = rg1361.GuardarFactura()
-    
 
 
 # --- gui2py designer generated code starts ---
@@ -487,7 +502,7 @@ with gui.Window(name='mywin',
             gui.Label(name='label_530_167_1258', height='17', left='321', 
                       top='56', width='58', text=u'IVA:', )
             gui.ComboBox(name='cat_iva', text=u'Responsable Inscripto', 
-                         left='383', top='49', width='190', readonly=True,
+                         left='383', top='49', width='190', editable=False,
                          onchange=on_cat_iva_change,
                          items={1: "Responsable Inscripto", 4: "Exento", 
                                 5: "Consumidor Final", 6: "Monotributo",
@@ -511,7 +526,7 @@ with gui.Window(name='mywin',
                             8: u'Nota de Crédito B', 9: 'Recibo B',
                             11: u'Factura C', 12: u'Nota de Débito C', 
                             13: u'Nota de Crédito C', 15: 'Recibo C', }, 
-                     text=u'', readonly=True)
+                     text=u'', editable=False)
         gui.Label(name='label_356_21_178', height='17', left='290', 
                   top='130', width='20', text=u'N\xb0:', )
         gui.TextBox(mask='##', name=u'pto_vta', alignment='right', 
@@ -667,41 +682,39 @@ with gui.Window(name='mywin',
             gui.Label(name='label_26_372_2499_2861', height='17', 
                       left='13', top='28', width='39', text=u'CAE:', )
             gui.TextBox(name='cae', left='78', top='23', width='133', 
-                        value=u'123456789012345', )
+                        value=u'123456789012345', editable=False)
             gui.Label(name='label_26_372_217', height='17', left='11', 
                       top='60', width='71', text=u'Venc. CAE:', )
             gui.TextBox(mask='date', name=u'fecha_vto_cae', 
                         alignment='center', left='94', top='54',                         
-                        value=datetime.date(2014, 2, 11), )
+                        value=datetime.date(2014, 2, 11), editable=False)
             gui.Button(label=u'Obtener', name=u'obtener', left='224', 
                        top='21', width='75', onclick=obtener_cae)
             gui.Label(name='label_26_372', left='11', top='90', width='39', 
                       text=u'Resultado:', )
             gui.RadioButton(label=u'Aceptado', name='aceptado', 
                             left='95', top='88', width='75', 
-                            value=True, )
+                            value=True, enabled=False)
             gui.RadioButton(label=u'Rechazado', name='rechazado', 
                             left='199', top='88', width='100', 
-                            )
+                            enabled=False)
             gui.Button(label=u'Imprimir', name=u'imprimir', 
                        left='224', top='53', width='75', onclick=generar_pdf)
         gui.Label(id=1892, name='label_469_345_1892', alignment='right', 
                   height='17', left='466', top='488', width='41', 
                   text=u'IVA:', )
-        gui.TextBox(mask='#####.##', name=u'imp_iva', 
-                    alignment='right', left='520', top='485', width='115', 
-                    value=1000.0, )
+        gui.TextBox(mask='#####.##', name=u'imp_iva', editable=False,
+                    alignment='right', left='520', top='485', width='115',)
         gui.Label(name='label_469_345', alignment='right', height='17', 
                   left='406', top='461', width='110', 
                   text=u'Otros Tributos:', )
-        gui.TextBox(mask='#####.##', name=u'imp_trib', 
-                    alignment='right', left='520', top='455', width='115', 
-                    value=1000.0, )
+        gui.TextBox(mask='#####.##', name=u'imp_trib', editable=False,
+                    alignment='right', left='520', top='455', width='115')
         gui.Label(name='label_469_345_226', alignment='right', 
                   height='17', left='468', top='519', width='41', 
                   text=u'Total:', )
         gui.TextBox(mask='#####.##', name=u'imp_total', alignment='right', 
-                    left='520', top='515', width='115', value=1000.0, )
+                    left='520', top='515', width='115', editable=False)
         gui.Image(name='image_507_571', height='36', left='394', top='600', 
                   width='238', filename='sistemas-agiles.png', )
         gui.Image(name='image_33_540', height='50', left='350', top='490', 
