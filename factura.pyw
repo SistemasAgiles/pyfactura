@@ -102,15 +102,17 @@ def on_cat_iva_change(evt):
 
 def on_tipo_cbte_change(evt):
     panel = evt.target.get_parent()
-    tipo_cbte = panel['tipo_cbte'].value
-    pto_vta = panel['pto_vta'].value
-    if tipo_cbte and pto_vta:
-        nro_cbte = wsfev1.CompUltimoAutorizado(tipo_cbte, pto_vta)
-        print wsfev1.Excepcion, wsfev1.ErrMsg
-    else:
-        nro_cbte = -1
-    nro_cbte = int(nro_cbte) + 1
-    panel['nro_cbte'].value = nro_cbte
+    # solo cambiar si es no es de solo lectura (por ej cargando desde bd)
+    if panel['nro_cbte'].editable:
+        tipo_cbte = panel['tipo_cbte'].value
+        pto_vta = panel['pto_vta'].value
+        if tipo_cbte and pto_vta:
+            nro_cbte = wsfev1.CompUltimoAutorizado(tipo_cbte, pto_vta)
+            print wsfev1.Excepcion, wsfev1.ErrMsg
+        else:
+            nro_cbte = -1
+        nro_cbte = int(nro_cbte) + 1
+        panel['nro_cbte'].value = nro_cbte
 
 def limpiar(evt, confirmar=False):
     if confirmar:
@@ -150,6 +152,7 @@ def habilitar(valor=True):
     panel['notebook']['obs'].enabled = valor
     panel['aut']['obtener'].enabled = not valor
     panel['aut']['imprimir'].enabled = False
+    panel['nro_cbte'].editable = valor
 
 def on_grid_cell_change(evt):
     grid = evt.target
@@ -451,6 +454,7 @@ def cargar(evt):
     panel['tipo_cbte'].value = f["tipo_cbte"]
     panel['pto_vta'].value = f["punto_vta"]
     panel['nro_cbte'].value = f["cbte_nro"]
+    panel['nro_cbte'].editable = False      # no permit que el evento lo cambie
     panel['fecha_cbte'].value = cdate(f["fecha_cbte"])
     panel['conceptos']['productos'].value = f["concepto"] & 1
     panel['conceptos']['servicios'].value = f["concepto"] & 2
