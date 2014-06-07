@@ -22,6 +22,7 @@ import sys
 import gui          # import gui2py package (shortcuts)
 
 from pyafipws.padron import PadronAFIP
+from pyafipws.rg1361 import RG1361AFIP
 from pyafipws.wsaa import WSAA
 from pyafipws.wsfev1 import WSFEv1
 from pyafipws.pyfepdf import FEPDF
@@ -46,6 +47,7 @@ import datos
 # inicializo los componenetes de negocio:
 
 padron = PadronAFIP()
+rg1361 = RG1361AFIP()
 wsaa = WSAA()
 wsfev1 = WSFEv1()
 ta = wsaa.Autenticar("wsfe", cert, privatekey, wsaa_url, cache="cache")
@@ -269,7 +271,7 @@ def obtener_cae(evt):
     if wsfev1.ErrMsg:
         gui.alert(wsfev1.ErrMsg, u"Mensajes Error AFIP")
 
-def generar_pdf(evt):
+def crear_factura(comp):
     tipo_cbte = panel['tipo_cbte'].value or 6
     punto_vta = panel['pto_vta'].value
     cbte_nro = panel['nro_cbte'].value
@@ -294,6 +296,8 @@ def generar_pdf(evt):
     obs_generales = panel['notebook']['obs']['generales'].value
     obs_comerciales = panel['notebook']['obs']['comerciales'].value
     nombre_cliente = panel['cliente']['nombre'].value
+    email = email = panel['cliente']['email'].value
+    cat_iva =  panel['cliente']['cat_iva'].value or None
     # dividir el domicilio en lineas y ubicar los campos
     domicilio = panel['cliente']['domicilio'].value.split()
     domicilio_cliente = domicilio and domicilio[0] or ""
@@ -307,7 +311,7 @@ def generar_pdf(evt):
     vto = panel['aut']['fecha_vto_cae'].value
     fch_venc_cae = vto and vto.strftime("%Y%m%d") or ""
     
-    fepdf.CrearFactura(concepto, tipo_doc, nro_doc, tipo_cbte, punto_vta,
+    comp.CrearFactura(concepto, tipo_doc, nro_doc, tipo_cbte, punto_vta,
         cbte_nro, imp_total, imp_tot_conc, imp_neto,
         imp_iva, imp_trib, imp_op_ex, fecha_cbte, fecha_venc_pago, 
         fecha_serv_desde, fecha_serv_hasta, 
@@ -316,11 +320,14 @@ def generar_pdf(evt):
         obs_comerciales, obs_generales, forma_pago, incoterms, 
         idioma_cbte, motivo)
 
+    comp.EstablecerParametro("email", email)
+    comp.EstablecerParametro("cat_iva", cat_iva)
+    
     if False:
         tipo = 91
         pto_vta = 2
         nro = 1234
-        fepdf.AgregarCmpAsoc(tipo, pto_vta, nro)
+        comp.AgregarCmpAsoc(tipo, pto_vta, nro)
 
     if False:
         tributo_id = 99
@@ -328,14 +335,14 @@ def generar_pdf(evt):
         base_imp = "100.00"
         alic = "1.00"
         importe = "1.00"
-        fepdf.AgregarTributo(tributo_id, desc, base_imp, alic, importe)
+        comp.AgregarTributo(tributo_id, desc, base_imp, alic, importe)
 
     listado = panel['notebook']['alicuotas_iva']['listado']
     for it in listado.items:
         iva_id = it['iva_id']
         base_imp = it['base_imp']
         importe = it['importe']
-        fepdf.AgregarIva(iva_id, base_imp, importe)
+        comp.AgregarIva(iva_id, base_imp, importe)
     
     for it in grilla.items:
         u_mtx = ""
@@ -354,28 +361,31 @@ def generar_pdf(evt):
             precio += imp_iva / qty
             subtotal += imp_iva
         despacho = ""
-        fepdf.AgregarDetalleItem(u_mtx, cod_mtx, codigo, ds, qty, umed, 
+        comp.AgregarDetalleItem(u_mtx, cod_mtx, codigo, ds, qty, umed, 
                 precio, bonif, iva_id, imp_iva, subtotal, despacho)
 
     if True:
-        fepdf.AgregarDato("logo", "sistemas-agiles.png")
-        fepdf.AgregarDato("empresa", "Empresa de Prueba")
-        fepdf.AgregarDato("mebrete1", "Direccion de Prueba")
-        fepdf.AgregarDato("membrete2", "Capital Federal")
-        fepdf.AgregarDato("cuit", "CUIT 30-00000000-0")
-        fepdf.AgregarDato("iibb", "IIBB 30-00000000-0")
-        fepdf.AgregarDato("iva", "IVA Responsable Inscripto")
-        fepdf.AgregarDato("inicio", "Inicio de Actividad: 01/04/2006")
+        comp.AgregarDato("logo", "sistemas-agiles.png")
+        comp.AgregarDato("empresa", "Empresa de Prueba")
+        comp.AgregarDato("mebrete1", "Direccion de Prueba")
+        comp.AgregarDato("membrete2", "Capital Federal")
+        comp.AgregarDato("cuit", "CUIT 30-00000000-0")
+        comp.AgregarDato("iibb", "IIBB 30-00000000-0")
+        comp.AgregarDato("iva", "IVA Responsable Inscripto")
+        comp.AgregarDato("inicio", "Inicio de Actividad: 01/04/2006")
 
     if len(domicilio) > 1:
-        fepdf.AgregarDato("Cliente.Localidad", domicilio[1])
+        comp.AgregarDato("Cliente.Localidad", domicilio[1])
     if len(domicilio) > 2:
-        fepdf.AgregarDato("Cliente.Provincia", domicilio[2])
+        comp.AgregarDato("Cliente.Provincia", domicilio[2])
 
+def generar_pdf(evt):
+    crear_factura(fepdf)
     fepdf.CrearPlantilla(papel=conf_fact.get("papel", "legal"), 
                          orientacion=conf_fact.get("orientacion", "portrait"))
     if True:
         fepdf.AgregarDato("draft", u"BORRADOR")
+
     fepdf.ProcesarPlantilla(num_copias=int(conf_fact.get("copias", 1)),
                             lineas_max=int(conf_fact.get("lineas_max", 24)),
                             qty_pos=conf_fact.get("cant_pos") or 'izq')
@@ -416,6 +426,8 @@ def guardar(evt):
         padron.Guardar(tipo_doc, nro_doc, denominacion, cat_iva, direccion, email)
     else:
         gui.alert(u"Información del cliente incompleta", "Imposible Guardar")
+    crear_factura(rg1361)
+    rg1361.GuardarFactura()
 
 
 # --- gui2py designer generated code starts ---
