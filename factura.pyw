@@ -8,7 +8,7 @@ from __future__ import with_statement   # for python 2.5 compatibility
 __author__ = "Mariano Reingart (reingart@gmail.com)"
 __copyright__ = "Copyright (C) 2014- Mariano Reingart"
 __license__ = "LGPL 3.0"
-__version__ = "0.5a"
+__version__ = "0.5c"
 
 # images were taken from Pythoncard's proof and widgets demos
 # for more complete examples, see each control module
@@ -313,7 +313,7 @@ def crear_factura(comp, imprimir=True):
     cat_iva =  panel['cliente']['cat_iva'].value or None
     # dividir el domicilio en lineas y ubicar los campos (solo al imprimir)
     if imprimir:
-        domicilio = panel['cliente']['domicilio'].value.split()
+        domicilio = panel['cliente']['domicilio'].value.split("\n")
         domicilio_cliente = domicilio and domicilio[0] or ""
     else:
         domicilio = domicilio_cliente = panel['cliente']['domicilio'].value
@@ -787,6 +787,9 @@ if __name__ == "__main__":
     try:
         if len(sys.argv)>1 and not sys.argv[1].startswith("-"):
             CONFIG_FILE = sys.argv[1]
+        new_conf = os.path.join("conf", CONFIG_FILE)
+        if not os.path.exists(CONFIG_FILE) and os.path.exists(new_conf):
+            CONFIG_FILE = new_conf
         config = SafeConfigParser()
         config.read(CONFIG_FILE)
         if not len(config.sections()):
