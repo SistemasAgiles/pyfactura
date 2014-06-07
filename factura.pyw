@@ -139,12 +139,14 @@ def on_tipo_cbte_change(evt):
     nro_cbte = int(nro_cbte) + 1
     panel['nro_cbte'].value = nro_cbte
 
-def on_load(evt):
+def limpiar(evt, confirmar=False):
+    if confirmar:
+        if not gui.confirm("¿Se perderán todos los campos?", "Limpiar"):
+            return
     today = datetime.datetime.today()
     desde = today - datetime.timedelta(today.day - 1)
     hasta = desde + datetime.timedelta(today.day + 31)
     hasta = hasta -  datetime.timedelta(hasta.day)
-    panel = evt.target['panel']
     panel['cliente']['nro_doc'].value = ""
     panel['cliente']['nombre'].value = ""
     panel['cliente']['domicilio'].value = ""
@@ -470,7 +472,7 @@ def grabar(evt):
 with gui.Window(name='mywin', 
                 title=u'Aplicativo Facturaci\xf3n Electr\xf3nica', 
                 resizable=True, height='620px', left='181', top='52', 
-                width='653px', onload=on_load,
+                width='653px', onload=limpiar,
                 image='', ):
     with gui.MenuBar(name='menubar_83_155', ):
         with gui.Menu(name='menu_114', ):
@@ -725,6 +727,8 @@ with gui.Window(name='mywin',
                   width='100', filename='logo-pyafipws.png', )
         gui.Button(label=u'Grabar', name=u'grabar', 
                    left='350', top='540', width='75', onclick=grabar)
+        gui.Button(label=u'Limpiar', name=u'limpiar', left='430', top='540', 
+                   width='75', onclick=lambda evt: limpiar(evt, True))
 
 
 # --- gui2py designer generated code ends ---
