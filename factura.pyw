@@ -106,7 +106,7 @@ def on_tipo_cbte_change(evt):
     # solo cambiar si es no es de solo lectura (por ej cargando desde bd)
     if panel['nro_cbte'].editable:
         tipo_cbte = panel['tipo_cbte'].value
-        pto_vta = panel['pto_vta'].value
+        pto_vta = panel['pto_vta'].value = pto_vta_emisor
         if tipo_cbte and pto_vta:
             nro_cbte = wsfev1.CompUltimoAutorizado(tipo_cbte, pto_vta)
             print wsfev1.Excepcion, wsfev1.ErrMsg
@@ -798,7 +798,8 @@ if __name__ == "__main__":
         cert = config.get('WSAA','CERT')
         privatekey = config.get('WSAA','PRIVATEKEY')
         cuit_emisor = config.get('WSFEv1','CUIT')
-        cat_iva_emisor = int(config.get('WSFEv1','CAT_IVA') or 1) # RI
+        cat_iva_emisor = int(config.get('WSFEv1','CAT_IVA')) # 1: RI
+        pto_vta_emisor = int(config.get('WSFEv1','PTO_VTA'))
         
         if config.has_section('FACTURA'):
             conf_fact = dict(config.items('FACTURA'))
