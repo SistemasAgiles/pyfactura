@@ -311,7 +311,7 @@ def obtener_cae(evt):
     if wsfev1.Resultado == "A":
         panel['aut']['imprimir'].enabled = True
 
-def crear_factura(comp):
+def crear_factura(comp, imprimir=True):
     tipo_cbte = panel['tipo_cbte'].value or 6
     punto_vta = panel['pto_vta'].value
     cbte_nro = panel['nro_cbte'].value
@@ -397,7 +397,7 @@ def crear_factura(comp):
         imp_iva = it['imp_iva']
         subtotal = it['subtotal']
         # no discriminar IVA si no es Factura A:
-        if tipo_cbte not in (1, 2, 3, 4):
+        if tipo_cbte not in (1, 2, 3, 4) and imprimir:
             precio += imp_iva / qty
             subtotal += imp_iva
         despacho = ""
@@ -464,7 +464,7 @@ def grabar(evt):
     email = panel['cliente']['email'].value
     if all([tipo_doc, nro_doc, denominacion]):
         padron.Guardar(tipo_doc, nro_doc, denominacion, cat_iva, direccion, email)
-        crear_factura(rg1361)
+        crear_factura(rg1361, imprimir=False)
         id_factura = rg1361.GuardarFactura()
         habilitar(False)
     else:
