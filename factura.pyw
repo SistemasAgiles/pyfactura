@@ -338,9 +338,12 @@ def crear_factura(comp, imprimir=True):
     nombre_cliente = panel['cliente']['nombre'].value
     email = email = panel['cliente']['email'].value
     cat_iva =  panel['cliente']['cat_iva'].value or None
-    # dividir el domicilio en lineas y ubicar los campos
-    domicilio = panel['cliente']['domicilio'].value.split()
-    domicilio_cliente = domicilio and domicilio[0] or ""
+    # dividir el domicilio en lineas y ubicar los campos (solo al imprimir)
+    if imprimir:
+        domicilio = panel['cliente']['domicilio'].value.split()
+        domicilio_cliente = domicilio and domicilio[0] or ""
+    else:
+        domicilio = domicilio_cliente = panel['cliente']['domicilio'].value
     pais_dst_cmp = 200  # Argentina
     id_impositivo =  panel['cliente']['cat_iva'].text
     forma_pago = panel['conceptos']['forma_pago'].text
@@ -471,6 +474,8 @@ def grabar(evt):
         gui.alert(u"Información del cliente incompleta", "Imposible Guardar")
 
 def cargar(evt):
+    if not gui.confirm(u"¿Se restableceran todos los campos?", u"Cargar última factura"):
+        return
     rg1361.ObtenerFactura()
     f = rg1361.factura
     cdate = lambda s: datetime.datetime.strptime(s, "%Y%m%d").date() if s else None
@@ -499,7 +504,6 @@ def cargar(evt):
     panel['cliente']['nombre'].value = f["nombre_cliente"]
     panel['cliente']['email'].value = f["email"]
     panel['cliente']['cat_iva'].value = f["cat_iva"] or None 
-    # dividir el domicilio en lineas y ubicar los campos
     panel['cliente']['domicilio'].value = f["domicilio_cliente"]
     panel['conceptos']['forma_pago'].text = f["forma_pago"]
     panel['notebook']['obs']['afip'].value = f.get("motivo_obs") or ""
