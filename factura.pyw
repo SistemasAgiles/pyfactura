@@ -41,6 +41,7 @@ wsfev1_url = None
 cuit_emisor = 20267565393
 cat_iva_emisor = 1 # RI
 conf_fact = {}
+id_factura = None
 
 import datos
 
@@ -205,6 +206,9 @@ def recalcular():
     panel['imp_total'].value = total + sum(imp_iva.values(), 0.)
 
 def obtener_cae(evt):
+    global id_factura
+    if not id_factura:
+        grabar(evt)
     tipo_cbte = panel['tipo_cbte'].value
     punto_vta = panel['pto_vta'].value
     cbte_nro = panel['nro_cbte'].value
@@ -270,6 +274,17 @@ def obtener_cae(evt):
         gui.alert(wsfev1.Obs, u"Observaciones AFIP")
     if wsfev1.ErrMsg:
         gui.alert(wsfev1.ErrMsg, u"Mensajes Error AFIP")
+
+    # actualizar registro
+    rg1361.EstablecerParametro("cae", wsfev1.CAE)
+    rg1361.EstablecerParametro("fecha_vto", wsfev1.Vencimiento)
+    rg1361.EstablecerParametro("motivo_obs", wsfev1.Obs)
+    rg1361.EstablecerParametro("resultado", wsfev1.Resultado)
+    rg1361.EstablecerParametro("reproceso", wsfev1.Reproceso)
+    rg1361.EstablecerParametro("err_code", wsfev1.ErrCode)
+    rg1361.EstablecerParametro("err_msg", wsfev1.ErrMsg)
+    rg1361.ActualizarFactura(id_factura)
+
 
 def crear_factura(comp):
     tipo_cbte = panel['tipo_cbte'].value or 6
@@ -414,8 +429,8 @@ def generar_pdf(evt):
     fepdf.GenerarPDF(archivo=salida)
     fepdf.MostrarPDF(archivo=salida,imprimir='--imprimir' in sys.argv)
 
-
-def guardar(evt):
+def grabar(evt):
+    global id_factura
     tipo_doc = panel['cliente']['tipo_doc'].value
     nro_doc = panel['cliente']['nro_doc'].value.replace("-", "")
     denominacion = panel['cliente']['nombre'].value
@@ -427,7 +442,8 @@ def guardar(evt):
     else:
         gui.alert(u"Información del cliente incompleta", "Imposible Guardar")
     crear_factura(rg1361)
-    rg1361.GuardarFactura()
+    id_factura = rg1361.GuardarFactura()
+    
 
 
 # --- gui2py designer generated code starts ---
@@ -690,8 +706,9 @@ with gui.Window(name='mywin',
                   width='238', filename='sistemas-agiles.png', )
         gui.Image(name='image_33_540', height='50', left='350', top='490', 
                   width='100', filename='logo-pyafipws.png', )
-        gui.Button(label=u'Guardar', name=u'guardar', 
-                   left='350', top='540', width='75', onclick=guardar)
+        gui.Button(label=u'Grabar', name=u'grabar', 
+                   left='350', top='540', width='75', onclick=grabar)
+
 
 # --- gui2py designer generated code ends ---
 
