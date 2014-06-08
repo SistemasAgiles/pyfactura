@@ -874,7 +874,8 @@ if __name__ == "__main__":
             
         # ajustar opciones de articulos:
         if config.has_section('ARTICULOS'):
-            datos.articulos = dict(config.items('ARTICULOS'))
+            datos.articulos = dict([(k, unicode(v, "latin1", "replace"))
+                                    for k,v in config.items('ARTICULOS')])
         grilla.columns[2].choices = datos.articulos.values()
 
         mywin.show()
