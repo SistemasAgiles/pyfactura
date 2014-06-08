@@ -8,7 +8,7 @@ from __future__ import with_statement   # for python 2.5 compatibility
 __author__ = "Mariano Reingart (reingart@gmail.com)"
 __copyright__ = "Copyright (C) 2014- Mariano Reingart"
 __license__ = "LGPL 3.0"
-__version__ = "0.5c"
+__version__ = "0.6a"
 
 # images were taken from Pythoncard's proof and widgets demos
 # for more complete examples, see each control module
@@ -28,6 +28,7 @@ from pyafipws.rg1361 import RG1361AFIP
 from pyafipws.wsaa import WSAA
 from pyafipws.wsfev1 import WSFEv1
 from pyafipws.pyfepdf import FEPDF
+from pyafipws.pyemail import PyEmail
 
 # set default locale to handle correctly numeric format (maskedit):
 import wx, locale
@@ -160,6 +161,7 @@ def habilitar(valor=True):
     panel['notebook']['obs'].enabled = valor
     panel['aut']['obtener'].enabled = not valor
     panel['aut']['imprimir'].enabled = False
+    panel['aut']['enviar'].enabled = False
     panel['nro_cbte'].editable = valor
 
 def on_grid_cell_change(evt):
@@ -290,6 +292,7 @@ def obtener_cae(evt):
 
     if wsfev1.Resultado == "A":
         panel['aut']['imprimir'].enabled = True
+        panel['aut']['enviar'].enabled = True
 
 def crear_factura(comp, imprimir=True):
     tipo_cbte = panel['tipo_cbte'].value or 6
@@ -316,7 +319,7 @@ def crear_factura(comp, imprimir=True):
     obs_generales = panel['notebook']['obs']['generales'].value
     obs_comerciales = panel['notebook']['obs']['comerciales'].value
     nombre_cliente = panel['cliente']['nombre'].value
-    email = email = panel['cliente']['email'].value
+    email = panel['cliente']['email'].value
     cat_iva =  panel['cliente']['cat_iva'].value or None
     # dividir el domicilio en lineas y ubicar los campos (solo al imprimir)
     if imprimir:
@@ -398,7 +401,7 @@ def crear_factura(comp, imprimir=True):
     if len(domicilio) > 2:
         comp.AgregarDato("Cliente.Provincia", domicilio[2])
 
-def generar_pdf(evt):
+def generar_pdf(evt, mostrar=True):
     crear_factura(fepdf)
     fepdf.CrearPlantilla(papel=conf_fact.get("papel", "legal"), 
                          orientacion=conf_fact.get("orientacion", "portrait"))
@@ -431,7 +434,9 @@ def generar_pdf(evt):
         fn = fn.encode('ascii', 'replace').replace('?','_')
         salida = os.path.join(d, "%s.pdf" % fn)
     fepdf.GenerarPDF(archivo=salida)
-    fepdf.MostrarPDF(archivo=salida,imprimir='--imprimir' in sys.argv)
+    if mostrar:
+        fepdf.MostrarPDF(archivo=salida, imprimir='--imprimir' in sys.argv)
+    return salida
 
 def grabar(evt):
     global id_factura
@@ -509,6 +514,31 @@ def cargar(evt):
     recalcular()
     habilitar(False)
 
+def enviar(evt):
+    tipo_cbte = panel['tipo_cbte'].text
+    punto_vta = panel['pto_vta'].value
+    cbte_nro = panel['nro_cbte'].value
+    cbte = "%s %04d-%08d" % (tipo_cbte, punto_vta, cbte_nro)    
+    motivo = conf_mail['motivo'].replace("NUMERO", cbte)
+    destinatario = panel['cliente']['email'].value
+    mensaje = conf_mail['cuerpo']
+    archivo = generar_pdf(evt, mostrar=False)
+    
+    print "Motivo: ", motivo
+    print "Destinatario: ", destinatario
+    print "Mensaje: ", mensaje
+    print "Archivo: ", archivo
+    
+    pyemail = PyEmail()
+    pyemail.Conectar(conf_mail['servidor'], 
+                     conf_mail['usuario'], conf_mail['clave'], )
+    if pyemail.Enviar(conf_mail['remitente'], 
+                        motivo, destinatario, mensaje, archivo):
+        gui.alert("Correo \"%s\" enviado correctamente a %s" % 
+                    (motivo, destinatario), "Enviar email", icon="info")
+    else:
+        print pyemail.Traceback
+        gui.alert(pyemail.Excepcion, "Error al enviar email", icon="error")
 
 # --- gui2py designer generated code starts ---
 
@@ -726,7 +756,7 @@ with gui.Window(name='mywin', visible=False,
                             height='45', left='147', top='110', width='468', 
                             )
         with gui.Panel(label=u'Autorizaci\xf3n AFIP:', name='aut', 
-                       height='121', left='15', top='449', width='320', 
+                       height='121', left='8', top='449', width='335', 
                        image='', ):
             gui.Label(name='label_26_372_2499_2861', height='17', 
                       left='13', top='28', width='39', text=u'CAE:', )
@@ -748,7 +778,10 @@ with gui.Window(name='mywin', visible=False,
                             left='199', top='88', width='100', 
                             enabled=False)
             gui.Button(label=u'Imprimir', name=u'imprimir', 
-                       left='224', top='53', width='75', onclick=generar_pdf)
+                       left='200', top='53', width='70', onclick=generar_pdf)
+            gui.Button(label=u'Enviar', name=u'enviar', left='270', top='53', 
+                       width='55', onclick=enviar)
+
         gui.Label(id=1892, name='label_469_345_1892', alignment='right', 
                   height='17', left='466', top='488', width='41', 
                   text=u'IVA:', )
