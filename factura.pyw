@@ -37,6 +37,7 @@ import wx, locale
 # configuración general
 
 CONFIG_FILE = "rece.ini"
+import datos
 
 # --- here go your event handlers ---
 
@@ -873,11 +874,8 @@ if __name__ == "__main__":
             
         # ajustar opciones de articulos:
         if config.has_section('ARTICULOS'):
-            for k,v in config.items('ARTICULOS'):
-                grilla.columns[2].choices = datos.articulos.append(v)
-        else:
-            import datos
-            grilla.columns[2].choices = datos.articulos.values()
+            datos.articulos = dict(config.items('ARTICULOS'))
+        grilla.columns[2].choices = datos.articulos.values()
 
         mywin.show()
         gui.main_loop()
