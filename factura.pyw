@@ -130,11 +130,17 @@ def limpiar(evt, confirmar=False):
     panel['cliente']['cat_iva'].value = None
     panel['tipo_cbte'].value = None
     panel['fecha_cbte'].value = today
+    panel['nro_cbte'].value = 0
     panel['periodo']['fecha_venc_pago'].value = today
     panel['periodo']['fecha_desde'].value = desde
     panel['periodo']['fecha_hasta'].value = hasta
     panel['aut']['cae'].value = ""
     panel['aut']['fecha_vto_cae'].value = None
+    panel['notebook']['obs']['generales'].value = ""
+    panel['notebook']['obs']['comerciales'].value = ""
+    panel['notebook']['obs']['afip'].value = ""
+    panel['notebook']['tributos']['grilla'].items.clear()
+    grilla.items.clear()
     recalcular()
     habilitar(True)
 
