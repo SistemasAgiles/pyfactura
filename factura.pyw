@@ -444,13 +444,17 @@ def grabar(evt):
     direccion = panel['cliente']['domicilio'].value
     cat_iva =  panel['cliente']['cat_iva'].value or None
     email = panel['cliente']['email'].value
-    if all([tipo_doc, nro_doc, denominacion]):
+    if not all([tipo_doc, nro_doc, denominacion]):
+        gui.alert(u"Información del cliente incompleta", "Imposible Guardar")
+    elif not grilla.items:
+        gui.alert(u"No ingresó artículos", "Imposible Guardar")
+    elif panel['imp_total'].value == 0 and not gui.confirm(u"¿Importe 0?", "Confirmar Guardar"):
+        pass
+    else:
         padron.Guardar(tipo_doc, nro_doc, denominacion, cat_iva, direccion, email)
         crear_factura(rg1361, imprimir=False)
         id_factura = rg1361.GuardarFactura()
         habilitar(False)
-    else:
-        gui.alert(u"Información del cliente incompleta", "Imposible Guardar")
 
 def cargar(evt):
     if not gui.confirm(u"¿Se restableceran todos los campos?", u"Cargar última factura"):
