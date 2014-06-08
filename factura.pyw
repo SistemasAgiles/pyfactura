@@ -386,15 +386,11 @@ def crear_factura(comp, imprimir=True):
         comp.AgregarDetalleItem(u_mtx, cod_mtx, codigo, ds, qty, umed, 
                 precio, bonif, iva_id, imp_iva, subtotal, despacho)
 
-    if True:
-        comp.AgregarDato("logo", "sistemas-agiles.png")
-        comp.AgregarDato("empresa", "Empresa de Prueba")
-        comp.AgregarDato("mebrete1", "Direccion de Prueba")
-        comp.AgregarDato("membrete2", "Capital Federal")
-        comp.AgregarDato("cuit", "CUIT 30-00000000-0")
-        comp.AgregarDato("iibb", "IIBB 30-00000000-0")
-        comp.AgregarDato("iva", "IVA Responsable Inscripto")
-        comp.AgregarDato("inicio", "Inicio de Actividad: 01/04/2006")
+    # datos fijos:
+    for k, v in conf_pdf.items():
+        fepdf.AgregarDato(k, v)
+        if k.upper() == 'CUIT':
+            fepdf.CUIT = v  # CUIT del emisor para código de barras
 
     if len(domicilio) > 1:
         comp.AgregarDato("Cliente.Localidad", domicilio[1])
@@ -405,8 +401,8 @@ def generar_pdf(evt):
     crear_factura(fepdf)
     fepdf.CrearPlantilla(papel=conf_fact.get("papel", "legal"), 
                          orientacion=conf_fact.get("orientacion", "portrait"))
-    if True:
-        fepdf.AgregarDato("draft", u"BORRADOR")
+    if "borrador" in conf_pdf or HOMO:
+        fepdf.AgregarDato("draft", conf_pdf.get("borrador", "HOMOLOGACION"))
 
     fepdf.ProcesarPlantilla(num_copias=int(conf_fact.get("copias", 1)),
                             lineas_max=int(conf_fact.get("lineas_max", 24)),
