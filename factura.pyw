@@ -532,6 +532,10 @@ def enviar(evt):
     pyemail = PyEmail()
     pyemail.Conectar(conf_mail['servidor'], 
                      conf_mail['usuario'], conf_mail['clave'], )
+    if 'cc' in conf_mail:
+        pyemail.AgregarCC(conf_mail['cc'])
+    if 'bcc' in conf_mail:
+        pyemail.AgregarCC(conf_mail['bcc'])
     if pyemail.Enviar(conf_mail['remitente'], 
                         motivo, destinatario, mensaje, archivo):
         gui.alert("Correo \"%s\" enviado correctamente a %s" % 
