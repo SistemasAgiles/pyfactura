@@ -767,13 +767,13 @@ with gui.Window(name='mywin', visible=False,
                        height='121', left='8', top='449', width='335', 
                        image='', ):
             gui.Label(name='label_26_372_2499_2861', height='17', 
-                      left='13', top='28', width='39', text=u'CAE:', )
-            gui.TextBox(name='cae', left='78', top='23', width='133', 
+                      left='8', top='28', width='39', text=u'CAE:', )
+            gui.TextBox(name='cae', left='70', top='23', width='133', 
                         value=u'123456789012345', editable=False)
-            gui.Label(name='label_26_372_217', height='17', left='11', 
+            gui.Label(name='label_26_372_217', height='17', left='8', 
                       top='60', width='71', text=u'Venc. CAE:', )
             gui.TextBox(mask='date', name=u'fecha_vto_cae', 
-                        alignment='center', left='94', top='54',                         
+                        alignment='center', left='80', top='54',                         
                         value=datetime.date(2014, 2, 11), editable=False)
             gui.Button(label=u'Obtener', name=u'obtener', left='224', 
                        top='21', width='75', onclick=obtener_cae)
@@ -810,10 +810,10 @@ with gui.Window(name='mywin', visible=False,
         gui.Image(name='image_33_540', height='50', left='350', top='490', 
                   width='100', filename='logo-pyafipws.png', )
         gui.Button(label=u'Grabar', name=u'grabar', 
-                   left='350', top='540', width='75', onclick=grabar)
-        gui.Button(label=u'Limpiar', name=u'limpiar', left='430', top='540', 
+                   left='350', top='542', width='75', onclick=grabar)
+        gui.Button(label=u'Limpiar', name=u'limpiar', left='430', top='542', 
                    width='75', onclick=lambda evt: limpiar(evt, True))
-        gui.Button(label=u'Cargar', name=u'cargar', left='510', top='540', 
+        gui.Button(label=u'Cargar', name=u'cargar', left='510', top='542', 
                    width='75', onclick=cargar)
 
 
