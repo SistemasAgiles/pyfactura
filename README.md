@@ -2,7 +2,9 @@ pyfactura
 =========
 
 Visual application for electronic invoices (AFIP Argentina) 
+
 Copyright 2014 by Mariano Reingart <reingart@gmail.com>
+
 Licenced under GPLv3+
 
 Documentation: http://www.sistemasagiles.com.ar/trac/wiki/PyFactura (spanish)
@@ -12,6 +14,12 @@ Documentation: http://www.sistemasagiles.com.ar/trac/wiki/PyFactura (spanish)
 
 Features:
 ---------
+
+ * Simple form to enter electronic invoice data (customer, dates, items, taxes)
+ * Online autorization of the infoice agains AFIP (Argentina's Federal Tax Agency) 
+ * PDF generation customizable with extra data, logo, barcode, etc.
+ * Email sending with PDF attachment
+ * Internal database (sqlite embedded, compatible with PostgreSQL, MySQL or ODBC -MSSQL Server and MS Access-)
 
 Configuration:
 --------------
