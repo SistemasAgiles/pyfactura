@@ -8,10 +8,9 @@ from __future__ import with_statement   # for python 2.5 compatibility
 __author__ = "Mariano Reingart (reingart@gmail.com)"
 __copyright__ = "Copyright (C) 2014- Mariano Reingart"
 __license__ = "LGPL 3.0"
-__version__ = "0.6a"
+__version__ = "0.6b"
 
-# images were taken from Pythoncard's proof and widgets demos
-# for more complete examples, see each control module
+# Documentación: http://www.sistemasagiles.com.ar/trac/wiki/PyFactura
 
 import datetime     # base imports, used by some controls and event handlers
 import decimal
@@ -38,6 +37,7 @@ import wx, locale
 # configuración general
 
 CONFIG_FILE = "rece.ini"
+HOMO = WSAA.HOMO or WSFEv1.HOMO
 import datos
 
 # --- here go your event handlers ---
@@ -403,10 +403,14 @@ def crear_factura(comp, imprimir=True):
 
 def generar_pdf(evt, mostrar=True):
     crear_factura(fepdf)
+
     fepdf.CrearPlantilla(papel=conf_fact.get("papel", "legal"), 
                          orientacion=conf_fact.get("orientacion", "portrait"))
     if "borrador" in conf_pdf or HOMO:
         fepdf.AgregarDato("draft", conf_pdf.get("borrador", "HOMOLOGACION"))
+
+    if "logo" in conf_pdf and not os.path.exists(conf_pdf["logo"]):
+        fepdf.AgregarDato("logo", "")
 
     fepdf.ProcesarPlantilla(num_copias=int(conf_fact.get("copias", 1)),
                             lineas_max=int(conf_fact.get("lineas_max", 24)),
