@@ -8,7 +8,7 @@ from __future__ import with_statement   # for python 2.5 compatibility
 __author__ = "Mariano Reingart (reingart@gmail.com)"
 __copyright__ = "Copyright (C) 2014- Mariano Reingart"
 __license__ = "LGPL 3.0"
-__version__ = "0.6b"
+__version__ = "0.6c"
 
 # Documentación: http://www.sistemasagiles.com.ar/trac/wiki/PyFactura
 
@@ -554,7 +554,7 @@ with gui.Window(name='mywin', visible=False,
                 title=u'Aplicativo Facturaci\xf3n Electr\xf3nica', 
                 resizable=True, height='620px', left='181', top='52', 
                 width='653px',
-                image='', onload=limpiar):
+                image=''):
     with gui.MenuBar(name='menubar_83_155', ):
         with gui.Menu(name='menu_114', ):
             gui.MenuItemSeparator(name='menuitemseparator_130', )
@@ -897,8 +897,9 @@ if __name__ == "__main__":
         wsfev1 = WSFEv1()
         ta = wsaa.Autenticar("wsfe", cert, privatekey, wsaa_url, cache="cache")
         if not ta:
-            sys.exit("Imposible autenticar con WSAA: %s" % wsaa.Excepcion)
-        wsfev1.SetTicketAcceso(ta)
+            gui.alert(wsaa.Excepcion, u"Imposible autenticar con WSAA AFIP")
+        else:
+            wsfev1.SetTicketAcceso(ta)
         wsfev1.Cuit = cuit_emisor
         wsfev1.Conectar("cache", wsfev1_url)
         fepdf = FEPDF()
@@ -918,6 +919,7 @@ if __name__ == "__main__":
             datos.articulos = dict([(k, unicode(v, "latin1", "replace"))
                                     for k,v in config.items('ARTICULOS')])
         grilla.columns[2].choices = datos.articulos.values()
+        limpiar(None)
 
         mywin.show()
         gui.main_loop()

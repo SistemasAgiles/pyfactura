@@ -28,6 +28,7 @@ long_desc = "Aplicativo visual para generación Facturas Electrónicas AFIP"
 data_files = [
     (".", ["licencia.txt", "sistemas-agiles.png", "logo-pyafipws.png"]),
     ("conf", ["conf/rece.ini", "conf/geotrust.crt", "conf/afip_ca_info.crt", ]),
+    #(".", ["reingart.crt", "reingart.key", ]),
     ("cache", glob.glob("cache/*")),
     ]
 
