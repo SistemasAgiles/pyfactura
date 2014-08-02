@@ -225,12 +225,13 @@ def obtener_cae(evt):
         concepto += 2
     tipo_doc = panel['cliente']['tipo_doc'].value
     nro_doc = panel['cliente']['nro_doc'].value.replace("-", "")
-    imp_neto = "{0:.2f}".format(panel['notebook']['alicuotas_iva']['imp_neto'].value)
-    imp_iva = "{0:.2f}".format(panel['imp_iva'].value)
-    imp_trib = "{0:.2f}".format(panel['imp_trib'].value)
-    imp_op_ex = "{0:.2f}".format(panel['notebook']['alicuotas_iva']['imp_op_ex'].value)
-    imp_tot_conc = "{0:.2f}".format(panel['notebook']['alicuotas_iva']['imp_tot_conc'].value)
-    imp_total = "{0:.2f}".format(panel['imp_total'].value)
+    # Redondear valores a 2 decimales para superar validación 10056 de AFIP
+    imp_neto = "%0.2f" % panel['notebook']['alicuotas_iva']['imp_neto'].value
+    imp_iva = "%0.2f" % panel['imp_iva'].value
+    imp_trib = "%0.2f" % panel['imp_trib'].value
+    imp_op_ex = "%0.2f" % panel['notebook']['alicuotas_iva']['imp_op_ex'].value
+    imp_tot_conc = "%0.2f" % panel['notebook']['alicuotas_iva']['imp_tot_conc'].value
+    imp_total = "%0.2f" % panel['imp_total'].value
     fecha_venc_pago = panel['periodo']['fecha_venc_pago'].value.strftime("%Y%m%d")
     fecha_serv_desde = panel['periodo']['fecha_desde'].value.strftime("%Y%m%d")
     fecha_serv_hasta = panel['periodo']['fecha_hasta'].value.strftime("%Y%m%d")
@@ -258,8 +259,8 @@ def obtener_cae(evt):
     listado = panel['notebook']['alicuotas_iva']['listado']
     for it in listado.items:
         iva_id = it['iva_id']
-        base_imp = "{0:.2f}".format(it['base_imp'])
-        importe = "{0:.2f}".format(it['importe'])
+        base_imp = "%0.2f" % it['base_imp']
+        importe = "%0.2f" % it['importe']
         wsfev1.AgregarIva(iva_id, base_imp, importe)
 
     try:
