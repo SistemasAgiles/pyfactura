@@ -95,11 +95,6 @@ if 'py2exe' in sys.argv:
         Target(module=factura, script='factura.pyw'),
         ]
     data_files += [
-        (".", [
-        "C:\python25\lib\site-packages\wx-2.8-msw-unicode\wx\MSVCP71.dll",
-        "C:\python25\MSVCR71.dll",
-        "C:\python25\lib\site-packages\wx-2.8-msw-unicode\wx\gdiplus.dll",
-        ]), 
         ("plantillas", ["plantillas/logo.png", "plantillas/factura.csv", "plantillas/recibo.csv",]),
         ("cache", glob.glob("cache/*")),
         #("datos", ["datos/facturas.csv", "datos/facturas.json", "datos/facturas.txt", ])
@@ -115,12 +110,23 @@ if 'py2exe' in sys.argv:
     kwargs['cmdclass'] = {"py2exe": build_installer}
 
     if sys.version_info > (2, 7):
-        # add MSVCP90.dll path for py2exe
-        sys.path.append("C:\\Program Files\\Microsoft Visual Studio 9.0\\VC\\redist\\x86\\Microsoft.VC90.CRT")
-        data_files += [
-            ("Microsoft.VC90.CRT", glob.glob(r'C:\Python27\Lib\site-packages\pythonwin\mfc*.*')),
-            ("Microsoft.VC90.CRT", glob.glob(r'C:\Python27\Lib\site-packages\pythonwin\Microsoft.VC90.MFC.manifest')),
-            ]
+        # add "Microsoft Visual C++ 2008 Redistributable Package (x86)"
+        if os.path.exists(r"c:\Program Files\Mercurial"):
+            data_files += [(
+                ".", glob.glob(r'c:\Program Files\Mercurial\msvc*.dll') +
+                     glob.glob(r'c:\Program Files\Mercurial\Microsoft.VC90.CRT.manifest'),
+                )]
+        sys.path.insert(0, r"C:\Python27\Lib\site-packages\pythonwin")
+        data_files += [(
+            ".", glob.glob(r'C:\Python27\Lib\site-packages\pythonwin\mfc*.*') +
+                 glob.glob(r'C:\Python27\Lib\site-packages\pythonwin\Microsoft.VC90.MFC.manifest'),
+            )]
+    else:
+        data_files += [(".", [
+            "C:\python25\Lib\site-packages\wx-2.8-msw-unicode\wx\MSVCP71.dll",
+            "C:\python25\MSVCR71.dll",
+            "C:\python25\lib\site-packages\wx-2.8-msw-unicode\wx\gdiplus.dll",
+            ])]
 
     # agrego tag de homologación (testing - modo evaluación):
     __version__ += "-homo" if HOMO else "-full"
