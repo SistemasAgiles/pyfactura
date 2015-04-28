@@ -8,7 +8,7 @@ from __future__ import with_statement   # for python 2.5 compatibility
 __author__ = "Mariano Reingart (reingart@gmail.com)"
 __copyright__ = "Copyright (C) 2014- Mariano Reingart"
 __license__ = "LGPL 3.0"
-__version__ = "0.6d"
+__version__ = "0.6e"
 
 # Documentación: http://www.sistemasagiles.com.ar/trac/wiki/PyFactura
 
@@ -374,15 +374,15 @@ def crear_factura(comp, imprimir=True):
     for it in grilla.items:
         u_mtx = ""
         cod_mtx = ""
-        codigo = it['codigo']
-        ds = it['ds']
+        codigo = it['codigo'] or ""
+        ds = it['ds'] or ""
         qty = it['qty']
         umed = 7
         precio = it['precio']
         bonif = 0.00
         iva_id = it['iva_id']
-        imp_iva = it['imp_iva']
-        subtotal = it['subtotal']
+        imp_iva = it['imp_iva'] or 0
+        subtotal = it['subtotal'] or 0
         # no discriminar IVA si no es Factura A:
         if tipo_cbte not in (1, 2, 3, 4) and imprimir:
             precio += imp_iva / qty
