@@ -32,7 +32,7 @@ data_files = [
     ("cache", glob.glob("cache/*")),
     ]
 
-HOMO = True
+HOMO = False
 
 # build a one-click-installer for windows:
 if 'py2exe' in sys.argv:
@@ -105,6 +105,14 @@ if 'py2exe' in sys.argv:
         ]
     data_files.append((".", pycard_resources))
 
+    # add certification authorities (newer versions of httplib2)
+    try:
+        import httplib2
+        if httplib2.__version__ >= "0.9":
+            data_files += [("httplib2", 
+                [os.path.join(os.path.dirname(httplib2.__file__), "cacerts.txt")])]
+    except ImportError:
+        pass
 
     # custom installer:
     kwargs['cmdclass'] = {"py2exe": build_installer}
