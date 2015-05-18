@@ -8,7 +8,7 @@ from __future__ import with_statement   # for python 2.5 compatibility
 __author__ = "Mariano Reingart (reingart@gmail.com)"
 __copyright__ = "Copyright (C) 2014- Mariano Reingart"
 __license__ = "LGPL 3.0"
-__version__ = "0.7a"
+__version__ = "0.7b"
 
 # Documentación: http://www.sistemasagiles.com.ar/trac/wiki/PyFactura
 
@@ -31,8 +31,11 @@ from pyafipws.pyemail import PyEmail
 
 # set default locale to handle correctly numeric format (maskedit):
 import wx, locale
-#locale.setlocale(locale.LC_ALL, u'es_ES.UTF-8')
-#loc = wx.Locale(wx.LANGUAGE_DEFAULT, wx.LOCALE_LOAD_DEFAULT)
+if sys.platform == "win32":
+    locale.setlocale(locale.LC_ALL, 'Spanish_Argentina.1252')
+elif sys.platform == "linux2":
+    locale.setlocale(locale.LC_ALL, 'es_AR.utf8')
+loc = wx.Locale(wx.LANGUAGE_DEFAULT, wx.LOCALE_LOAD_DEFAULT)
 
 # configuración general
 
