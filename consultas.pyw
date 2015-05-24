@@ -37,8 +37,27 @@ elif sys.platform == "linux2":
     locale.setlocale(locale.LC_ALL, 'es_AR.utf8')
 loc = wx.Locale(wx.LANGUAGE_DEFAULT, wx.LOCALE_LOAD_DEFAULT)
 
+CONFIG_FILE = "rece.ini"
+HOMO = WSAA.HOMO or WSFEv1.HOMO
+import datos
+
 
 # --- gui2py designer generated code starts ---
+
+def on_tipo_doc_change(evt):
+    ctrl = evt.target
+    value = ""
+    if ctrl.value == 80:
+        mask = '##-########-#'
+    elif ctrl.value == 99:
+        mask = '#'
+        value = "0"
+        on_nro_doc_change(evt)
+    else:
+        mask = '########'
+    panel['cliente']['nro_doc'].mask = mask
+    panel['cliente']['nro_doc'].value = value
+
 
 with gui.Window(name='mywin', 
                 title=u'Aplicativo Facturaci\xf3n Electr\xf3nica', 
@@ -79,7 +98,7 @@ with gui.Window(name='mywin',
             gui.Label(name='label_182_163', height='21', left='16', top='31', 
                       width='38', text=u'Cliente:', )
             gui.ComboBox(name='tipo_doc', text=u'CF', left='75', top='23', 
-                         width='78', 
+                         width='78',  onchange=on_tipo_doc_change,
                          items=[u'CUIT', u'DNI', u'CI Extranjera', u'CF', u'Pasaporte'], 
                          selection=3, value=u'CF', )
             gui.TextBox(mask='##-########-#', name='nro_doc', left='164', 
@@ -139,6 +158,9 @@ with gui.Window(name='mywin',
 
 # obtener referencia a la ventana principal:
 mywin = gui.get("mywin")
+panel = mywin['panel']
+listado = panel['listado']
+
 
 if __name__ == "__main__":
         mywin.show()
