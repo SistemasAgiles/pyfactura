@@ -42,7 +42,7 @@ HOMO = WSAA.HOMO or WSFEv1.HOMO
 import datos
 
 
-# --- gui2py designer generated code starts ---
+# --- here go your event handlers ---
 
 def on_tipo_doc_change(evt):
     ctrl = evt.target
@@ -55,13 +55,15 @@ def on_tipo_doc_change(evt):
         on_nro_doc_change(evt)
     else:
         mask = '########'
-    panel['cliente']['nro_doc'].mask = mask
-    panel['cliente']['nro_doc'].value = value
+    panel['criterios']['nro_doc'].mask = mask
+    panel['criterios']['nro_doc'].value = value
 
+
+# --- gui2py designer generated code starts ---
 
 with gui.Window(name='mywin', 
                 title=u'Aplicativo Facturaci\xf3n Electr\xf3nica', 
-                resizable=True, height='571px', left='181', top='52', 
+                resizable=True, height='436px', left='181', top='52', 
                 width='794px', image='', ):
     with gui.MenuBar(name='menubar_83_155', ):
         with gui.Menu(name='menu_114', ):
@@ -75,43 +77,43 @@ with gui.Window(name='mywin',
                   width='100', filename='logo-pyafipws.png', )
         with gui.ListView(name='listado', height='353', left='7', top='168', 
                           width='775', item_count=0, sort_column=-1, ):
-            gui.ListColumn(name=u'tipo_cbte', text="tipo cbte")
-            gui.ListColumn(name=u'pto_vta', text="pto vta")
-            gui.ListColumn(name=u'nro_cbte', text="nro cbte")
-            gui.ListColumn(name=u'fecha_cbte', text="fecha cbte")
-            gui.ListColumn(name=u'tipo_doc', text="tipo doc")
-            gui.ListColumn(name=u'nro_doc', text="nro doc")
-            gui.ListColumn(name=u'cliente', text="cliente")
-            gui.ListColumn(name=u'imp_op_ex', text="imp op ex")
-            gui.ListColumn(name=u'imp_tot_conc', text="imp conc")
-            gui.ListColumn(name=u'imp_neto', text="imp neto")
-            gui.ListColumn(name=u'imp_iva', text="imp iva")
-            gui.ListColumn(name=u'imp_trib', text="imp trib")
-            gui.ListColumn(name=u'imp_total', text="imp tot")
+            gui.ListColumn(name=u'tipo_cbte', text='tipo cbte', )
+            gui.ListColumn(name=u'punto_vta', text='pto vta', )
+            gui.ListColumn(name=u'cbte_nro', text='nro cbte', )
+            gui.ListColumn(name=u'fecha_cbte', text='fecha cbte', )
+            gui.ListColumn(name=u'tipo_doc', text='tipo doc', )
+            gui.ListColumn(name=u'nro_doc', text='nro doc', )
+            gui.ListColumn(name=u'nombre_cliente', text='cliente', )
+            gui.ListColumn(name=u'imp_op_ex', text='imp op ex', )
+            gui.ListColumn(name=u'imp_tot_conc', text='imp conc', )
+            gui.ListColumn(name=u'imp_neto', text='imp neto', )
+            gui.ListColumn(name=u'imp_iva', text='imp iva', )
+            gui.ListColumn(name=u'imp_trib', text='imp trib', )
+            gui.ListColumn(name=u'imp_total', text='imp tot', )
         gui.Button(label=u'Buscar', name=u'buscar', left='350', top='542', 
                    width='75', fgcolor=u'#4C4C4C', )
         gui.Label(name='label_22_147', left='12', top='144', 
                   text=u'Resultados:', )
-        with gui.Panel(label=u'Criterios de B\xfasqueda:', name='cliente', 
+        with gui.Panel(label=u'Criterios de B\xfasqueda:', name='criterios', 
                        height='135', left='6', top='9', width='778', 
                        bgcolor=u'#F9F9F8', fgcolor=u'#4C4C4C', image='', ):
             gui.Label(name='label_182_163', height='21', left='16', top='31', 
                       width='38', text=u'Cliente:', )
             gui.ComboBox(name='tipo_doc', text=u'CF', left='75', top='23', 
                          width='78',  onchange=on_tipo_doc_change,
-                         items=[u'CUIT', u'DNI', u'CI Extranjera', u'CF', u'Pasaporte'], 
+                         items=[u'CUIT', u'DNI', u'CF', u'Pasaporte'], 
                          selection=3, value=u'CF', )
             gui.TextBox(mask='##-########-#', name='nro_doc', left='164', 
                         top='24', width='110', text=u'20-26756539-3', 
                         value=u'20-26756539-3', )
             gui.Label(name='label_268_164', height='31', left='295', top='28', 
                       width='61', text=u'Nombre:', )
-            gui.TextBox(name='nombre', left='367', top='22', width='240', 
-                        text=u'Mariano Reingart', value=u'Mariano Reingart', )
-            gui.Label(name='label_24_16', height='17', left='12', top='66', 
+            gui.TextBox(name='nombre_cliente', left='367', top='23', 
+                        width='240', value=u'Mariano Reingart', )
+            gui.Label(name='label_24_16', height='17', left='12', top='64', 
                       width='146', text=u'Tipo Comprobante:', )
             gui.ComboBox(name=u'tipo_cbte', left='151', top='58', width='170', 
-                         items=[u'Factura A', u'Nota de D\xe9bito A', u'Nota de Cr\xe9dito A', u'Recibo A', u'Factura B', u'Nota de D\xe9bito B', u'Nota de Cr\xe9dito B', u'Recibo B', u'Factura C', u'Nota de D\xe9bito C', u'Nota de Cr\xe9dito C', u'Recibo C'], )
+                         items=[u'Factura A', u'Factura B', u'Factura C', ], )
             gui.Label(name='label_356_21_178', height='17', left='262', 
                       top='96', width='20', text=u'Hasta:', )
             gui.TextBox(mask='##', name=u'pto_vta', alignment='right', 
@@ -119,7 +121,7 @@ with gui.Window(name='mywin',
             gui.Label(name='label_356_21_155', height='17', left='15', 
                       top='96', width='60', text=u'Fecha:', )
             gui.Label(id=2293, name='label_356_21_178_2293', height='17', 
-                      left='329', top='65', width='29', text=u'P.V.:', )
+                      left='329', top='64', width='29', text=u'P.V.:', )
             gui.Label(id=2591, name='label_356_21_178_2591', height='17', 
                       left='72', top='96', width='47', text=u'Desde:', )
             gui.TextBox(id=2794, mask='date', name=u'fecha_cbte_hasta', 
@@ -139,15 +141,15 @@ with gui.Window(name='mywin',
                         width='92', bgcolor=u'#FFFFFF', fgcolor=u'#000000', 
                         value=12345678, )
             gui.Label(name='label_26_372_2499_2861', height='17', left='439', 
-                      top='100', width='39', text=u'CAE:', )
+                      top='98', width='39', text=u'CAE:', )
             gui.TextBox(name='cae', left='480', top='93', width='274', 
-                        editable=False, text=u'123456789012345', 
+                        text=u'123456789012345', 
                         tooltip=u'CAE o c\xf3digo de barras', 
                         value=u'123456789012345', )
             gui.Label(id=1243, name='label_356_21_178_2591_1243', height='17', 
-                      left='423', top='62', width='47', text=u'Desde:', )
+                      left='423', top='63', width='47', text=u'Desde:', )
             gui.Label(id=1343, name='label_356_21_178_1343', height='17', 
-                      left='593', top='63', width='44', text=u'Hasta:', )
+                      left='593', top='64', width='44', text=u'Hasta:', )
         gui.Button(label=u'Reimprimir', name=u'reimprimir', left='430', 
                    top='542', width='93', fgcolor=u'#4C4C4C', )
         gui.Button(label=u'Exportar', name=u'exportar', left='528', top='542', 
