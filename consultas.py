@@ -58,6 +58,21 @@ def on_tipo_doc_change(evt):
     panel['criterios']['nro_doc'].mask = mask
     panel['criterios']['nro_doc'].value = value
 
+def exportar(evt):
+    from pyafipws.formatos.formato_csv import desaplanar, aplanar, escribir
+    # adapto los datos al formato de pyrece:
+    items = [item.copy() for item in listado.items]
+    for item in items:
+        print item
+        item['cbt_numero'] = item['cbte_nro']
+        item['fecha_cbte'] = item['fecha_cbte'].strftime("%Y%m%d")
+        if not 'tributos' in items:
+            item['tributos'] = []
+        if not 'ivas' in items:
+            item['ivas'] = []
+    filas1 = aplanar(items)   
+    print filas1
+    escribir(filas1, "facturas-exportar.csv")
 
 # --- gui2py designer generated code starts ---
 
@@ -163,7 +178,7 @@ with gui.Window(name='consultas',
         gui.Button(label=u'Cargar', name=u'cargar', left='430', 
                    top='542', width='93', fgcolor=u'#4C4C4C', )
         gui.Button(label=u'Exportar', name=u'exportar', left='528', top='542', 
-                   width='75', fgcolor=u'#4C4C4C', )
+                   width='75', fgcolor=u'#4C4C4C', onclick=exportar)
 
 # --- gui2py designer generated code ends ---
 
