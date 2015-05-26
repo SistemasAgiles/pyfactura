@@ -540,6 +540,11 @@ def cargar_factura(f):
 
     recalcular()
     habilitar(False)
+    # habilitar reimpresión y envio si tiene CAE
+    if f.get("cae") and str(f["cae"]).isdigit() and len(str(f["cae"])) == 14:
+        panel['aut']['obtener'].enabled = False
+        panel['aut']['imprimir'].enabled = True
+        panel['aut']['enviar'].enabled = True
 
 def enviar(evt):
     tipo_cbte = panel['tipo_cbte'].text
