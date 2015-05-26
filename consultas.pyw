@@ -77,19 +77,27 @@ with gui.Window(name='mywin',
                   width='100', filename='logo-pyafipws.png', )
         with gui.ListView(name='listado', height='353', left='7', top='168', 
                           width='775', item_count=0, sort_column=-1, ):
-            gui.ListColumn(name=u'tipo_cbte', text='tipo cbte', )
-            gui.ListColumn(name=u'punto_vta', text='pto vta', )
-            gui.ListColumn(name=u'cbte_nro', text='nro cbte', )
-            gui.ListColumn(name=u'fecha_cbte', text='fecha cbte', )
-            gui.ListColumn(name=u'tipo_doc', text='tipo doc', )
-            gui.ListColumn(name=u'nro_doc', text='nro doc', )
-            gui.ListColumn(name=u'nombre_cliente', text='cliente', )
-            gui.ListColumn(name=u'imp_op_ex', text='imp op ex', )
-            gui.ListColumn(name=u'imp_tot_conc', text='imp conc', )
-            gui.ListColumn(name=u'imp_neto', text='imp neto', )
-            gui.ListColumn(name=u'imp_iva', text='imp iva', )
-            gui.ListColumn(name=u'imp_trib', text='imp trib', )
-            gui.ListColumn(name=u'imp_total', text='imp tot', )
+            gui.ListColumn(name=u'tipo_cbte', text='tipo cbte')
+            gui.ListColumn(name=u'punto_vta', text='punto venta', width=50, align="right")
+            gui.ListColumn(name=u'cbte_nro', text='nro cbte', align="right")
+            gui.ListColumn(name=u'fecha_cbte', text='fecha cbte', 
+                           align="center")
+            gui.ListColumn(name=u'tipo_doc', text='tipo doc', width=50)
+            gui.ListColumn(name=u'nro_doc', text='nro doc', width=100, 
+                           align="right")
+            gui.ListColumn(name=u'nombre_cliente', text='cliente', width=200)
+            gui.ListColumn(name=u'imp_total', text='imp tot', width=100,
+                           represent="%.2f", align="right")
+            gui.ListColumn(name=u'imp_op_ex', text='imp op ex', width=100,
+                           represent="%.2f", align="right")
+            gui.ListColumn(name=u'imp_tot_conc', text='imp conc', width=100,
+                           represent="%.2f", align="right")
+            gui.ListColumn(name=u'imp_neto', text='imp neto', width=100,
+                           represent="%.2f", align="right")
+            gui.ListColumn(name=u'imp_iva', text='imp iva', width=100,
+                           represent="%.2f", align="right")
+            gui.ListColumn(name=u'imp_trib', text='imp trib', width=100,
+                           represent="%.2f", align="right")
         gui.Button(label=u'Buscar', name=u'buscar', left='350', top='542', 
                    width='75', fgcolor=u'#4C4C4C', )
         gui.Label(name='label_22_147', left='12', top='144', 
