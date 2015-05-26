@@ -187,6 +187,10 @@ def on_borrar_click(evt):
     if grilla.items:
         del grilla.items[-1]
 
+def on_consultas(evt):
+    import consultas
+    consultas.main(callback=cargar_factura)    
+
 def recalcular():
     neto_iva = {}
     imp_iva = {}
@@ -476,7 +480,17 @@ def cargar(evt):
         return
     rg1361.ObtenerFactura()
     f = rg1361.factura
-    cdate = lambda s: datetime.datetime.strptime(s, "%Y%m%d").date() if s else None
+    cargar_factura(f)
+
+def cdate(s):
+    if isinstance(s, datetime.datetime):
+        return s
+    elif s: 
+        return datetime.datetime.strptime(s, "%Y%m%d").date()
+    else:
+        return None
+
+def cargar_factura(f):
     panel['tipo_cbte'].value = f["tipo_cbte"]
     panel['pto_vta'].value = f["punto_vta"]
     panel['nro_cbte'].value = f["cbte_nro"]
@@ -566,6 +580,8 @@ with gui.Window(name='mywin', visible=False,
                 image=''):
     with gui.MenuBar(name='menubar_83_155', ):
         with gui.Menu(name='menu_114', ):
+            gui.MenuItem(name='consultas', label='Consultas', 
+                         onclick=on_consultas)
             gui.MenuItemSeparator(name='menuitemseparator_130', )
     gui.StatusBar(name='statusbar_15_91', 
                   text=u'Servicio Web Factura Electr\xf3nica mercado interno (WSFEv1)', )

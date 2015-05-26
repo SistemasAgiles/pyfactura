@@ -61,7 +61,7 @@ def on_tipo_doc_change(evt):
 
 # --- gui2py designer generated code starts ---
 
-with gui.Window(name='mywin', 
+with gui.Window(name='consultas', 
                 title=u'Aplicativo Facturaci\xf3n Electr\xf3nica', 
                 resizable=True, height='436px', left='181', top='52', 
                 width='794px', image='', ):
@@ -78,13 +78,15 @@ with gui.Window(name='mywin',
         with gui.ListView(name='listado', height='353', left='7', top='168', 
                           width='775', item_count=0, sort_column=-1, ):
             gui.ListColumn(name=u'tipo_cbte', text='tipo cbte')
-            gui.ListColumn(name=u'punto_vta', text='punto venta', width=50, align="right")
-            gui.ListColumn(name=u'cbte_nro', text='nro cbte', align="right")
+            gui.ListColumn(name=u'punto_vta', text='punto venta', 
+                           represent="%s", width=50, align="right")
+            gui.ListColumn(name=u'cbte_nro', text='nro cbte', 
+                           represent="%s", align="right")
             gui.ListColumn(name=u'fecha_cbte', text='fecha cbte', 
                            align="center")
             gui.ListColumn(name=u'tipo_doc', text='tipo doc', width=50)
             gui.ListColumn(name=u'nro_doc', text='nro doc', width=100, 
-                           align="right")
+                           represent="%s", align="right")
             gui.ListColumn(name=u'nombre_cliente', text='cliente', width=200)
             gui.ListColumn(name=u'imp_total', text='imp tot', width=100,
                            represent="%.2f", align="right")
@@ -151,32 +153,61 @@ with gui.Window(name='mywin',
             gui.Label(name='label_26_372_2499_2861', height='17', left='439', 
                       top='98', width='39', text=u'CAE:', )
             gui.TextBox(name='cae', left='480', top='93', width='274', 
-                        text=u'123456789012345', 
+                        text=u'123456789012345',
                         tooltip=u'CAE o c\xf3digo de barras', 
                         value=u'123456789012345', )
             gui.Label(id=1243, name='label_356_21_178_2591_1243', height='17', 
                       left='423', top='63', width='47', text=u'Desde:', )
             gui.Label(id=1343, name='label_356_21_178_1343', height='17', 
                       left='593', top='64', width='44', text=u'Hasta:', )
-        gui.Button(label=u'Reimprimir', name=u'reimprimir', left='430', 
+        gui.Button(label=u'Cargar', name=u'cargar', left='430', 
                    top='542', width='93', fgcolor=u'#4C4C4C', )
         gui.Button(label=u'Exportar', name=u'exportar', left='528', top='542', 
                    width='75', fgcolor=u'#4C4C4C', )
 
 # --- gui2py designer generated code ends ---
 
-
 # obtener referencia a la ventana principal:
-mywin = gui.get("mywin")
+mywin = gui.get("consultas")
 panel = mywin['panel']
 listado = panel['listado']
 
+def main(callback=None):
+        global mywin, panel, listado
+        # limpiar valores del diseñador:
+        panel['criterios']['tipo_doc'].items = datos.TIPO_DOC_MAP
+        panel['criterios']['tipo_doc'].value = 80                   # CUIT
+        panel['criterios']['nro_doc'].value = None
+        panel['criterios']['nombre_cliente'].value = ""
+        panel['criterios']['tipo_cbte'].items = datos.TIPO_CBTE_MAP        
+        panel['criterios']['tipo_cbte'].value = None
+        panel['criterios']['pto_vta'].value = None
+        panel['criterios']['nro_cbte_desde'].value = None
+        panel['criterios']['nro_cbte_hasta'].value = None
+        panel['criterios']['fecha_cbte_hasta'].value = None
+        panel['criterios']['fecha_cbte_desde'].value = None
+        panel['criterios']['cae'].value = ""
+        
+        # mostrar la representación más amigable de los códigos de AFIP
+        listado['tipo_doc'].represent = lambda x: datos.TIPO_DOC_MAP[x]
+        listado['tipo_cbte'].represent = lambda x: datos.TIPO_CBTE_MAP[x]
+        listado['fecha_cbte'].represent = lambda x: x.strftime("%x")
 
-if __name__ == "__main__":
+        if callback:
+            panel['cargar'].onclick = lambda evt: callback(listado.get_selected_items()[0])
+
         mywin.show()
         rg1361 = RG1361AFIP()
         listado = mywin['panel']['listado']
         listado.items.clear()
         for reg in rg1361.Consultar(tipo_cbte=1):
-            listado.items[reg['id']] = dict([(k, unicode(v)) for k,v in reg.items()])
-        gui.main_loop()
+            # convertir a fecha el formato de AFIP
+            if not isinstance(reg['fecha_cbte'], datetime.date):
+                reg['fecha_cbte'] = datetime.datetime.strptime(reg['fecha_cbte'], "%Y%m%d")
+            listado.items[reg['id']] = reg
+
+
+if __name__ == "__main__":
+    main()
+    gui.main_loop()
+
