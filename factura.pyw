@@ -577,8 +577,7 @@ with gui.Window(name='mywin', visible=False,
             gui.ComboBox(name='tipo_doc', text=u'CF', 
                          left='111', top='16', width='78', 
                          value=80, onchange=on_tipo_doc_change,
-                         items={80: u'CUIT', 96: u'DNI', 99: u'CF', 
-                                91: "CI Extranjera", 94: "Pasaporte"}, )
+                         items=datos.TIPO_DOC_MAP, )
             gui.TextBox(mask='##-########-#', name='nro_doc', 
                         left='192', top='17', width='110', 
                         value=u'20-26756539-3', onblur=on_nro_doc_change,
@@ -616,12 +615,7 @@ with gui.Window(name='mywin', visible=False,
                   width='80', text=u'Comprobante:', )
         gui.ComboBox(name=u'tipo_cbte', left='115', top='125', 
                      width='170', onchange=on_tipo_cbte_change,
-                     items={1: u'Factura A', 2: u'Nota de Débito A', 
-                            3: u'Nota de Crédito A', 4: 'Recibo A',
-                            6: u'Factura B', 7: u'Nota de Débito B', 
-                            8: u'Nota de Crédito B', 9: 'Recibo B',
-                            11: u'Factura C', 12: u'Nota de Débito C', 
-                            13: u'Nota de Crédito C', 15: 'Recibo C', }, 
+                     items=datos.TIPO_CBTE_MAP, 
                      text=u'', editable=False)
         gui.Label(name='label_356_21_178', height='17', left='290', 
                   top='130', width='20', text=u'N\xb0:', )
