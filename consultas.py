@@ -72,7 +72,12 @@ def exportar(evt):
             item['ivas'] = []
     filas1 = aplanar(items)   
     print filas1
-    escribir(filas1, "facturas-exportar.csv")
+    # elejir nombre de archivo:
+    result = gui.save_file(title='Guardar', filename="facturas-exportar.csv",
+        wildcard='|'.join(["Archivos CSV (*.csv)|*.csv"]))
+    if result:
+        filename = result[0]
+        escribir(filas1, filename)
 
 # --- gui2py designer generated code starts ---
 
