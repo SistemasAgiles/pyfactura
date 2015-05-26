@@ -83,7 +83,7 @@ def exportar(evt):
 
 with gui.Window(name='consultas', 
                 title=u'Aplicativo Facturaci\xf3n Electr\xf3nica', 
-                resizable=True, height='436px', left='181', top='52', 
+                resizable=True, height='636px', left='181', top='52', 
                 width='794px', image='', ):
     with gui.MenuBar(name='menubar_83_155', ):
         with gui.Menu(name='menu_114', ):
