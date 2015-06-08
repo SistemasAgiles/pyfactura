@@ -488,7 +488,7 @@ def cargar(evt):
     cargar_factura(f)
 
 def cdate(s):
-    if isinstance(s, datetime.datetime):
+    if isinstance(s, (datetime.datetime, datetime.date)):
         return s
     elif s: 
         return datetime.datetime.strptime(s, "%Y%m%d").date()
