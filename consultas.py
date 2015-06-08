@@ -115,6 +115,8 @@ def buscar():
             print "filtrado por cae", cae, reg['cae']
             continue
         # agrego el registro al listado:
+        for it in reg['ivas']:
+            reg['imp_iva_%d' % it['iva_id']] = it['importe']
         listado.items[reg['id']] = reg
 
 
@@ -123,7 +125,6 @@ def exportar(evt):
     # adapto los datos al formato de pyrece:
     items = [item.copy() for item in listado.items]
     for item in items:
-        print item
         item['cbt_numero'] = item['cbte_nro']
         item['fecha_cbte'] = item['fecha_cbte'].strftime("%Y%m%d")
         if not 'tributos' in items:
@@ -157,28 +158,34 @@ with gui.Window(name='consultas',
                   width='100', filename='logo-pyafipws.png', )
         with gui.ListView(name='listado', height='353', left='7', top='168', 
                           width='775', item_count=0, sort_column=-1, ):
-            gui.ListColumn(name=u'tipo_cbte', text='tipo cbte')
-            gui.ListColumn(name=u'punto_vta', text='punto venta', 
+            gui.ListColumn(name=u'tipo_cbte', text='Tipo Cbte')
+            gui.ListColumn(name=u'punto_vta', text='Punto Venta', 
                            represent="%s", width=50, align="right")
-            gui.ListColumn(name=u'cbte_nro', text='nro cbte', 
+            gui.ListColumn(name=u'cbte_nro', text='Nro Cbte', 
                            represent="%s", align="right")
-            gui.ListColumn(name=u'fecha_cbte', text='fecha cbte', 
+            gui.ListColumn(name=u'fecha_cbte', text='Fecha Cbte', 
                            align="center")
-            gui.ListColumn(name=u'tipo_doc', text='tipo doc', width=50)
-            gui.ListColumn(name=u'nro_doc', text='nro doc', width=100, 
+            gui.ListColumn(name=u'tipo_doc', text='Tipo Doc', width=50)
+            gui.ListColumn(name=u'nro_doc', text='Nro Doc', width=100, 
                            represent="%s", align="right")
-            gui.ListColumn(name=u'nombre_cliente', text='cliente', width=200)
-            gui.ListColumn(name=u'imp_total', text='imp tot', width=100,
+            gui.ListColumn(name=u'nombre_cliente', text='Cliente', width=150)
+            gui.ListColumn(name=u'id_impositivo', text='Cond. IVA', width=50,
+                           represent="%s", align="left")
+            gui.ListColumn(name=u'imp_total', text='Total', width=100,
                            represent="%.2f", align="right")
-            gui.ListColumn(name=u'imp_op_ex', text='imp op ex', width=100,
+            gui.ListColumn(name=u'imp_op_ex', text='Exento', width=100,
                            represent="%.2f", align="right")
-            gui.ListColumn(name=u'imp_tot_conc', text='imp conc', width=100,
+            gui.ListColumn(name=u'imp_tot_conc', text='No Gravado', width=100,
                            represent="%.2f", align="right")
-            gui.ListColumn(name=u'imp_neto', text='imp neto', width=100,
+            gui.ListColumn(name=u'imp_neto', text='Neto', width=100,
                            represent="%.2f", align="right")
-            gui.ListColumn(name=u'imp_iva', text='imp iva', width=100,
+            gui.ListColumn(name=u'imp_iva_4', text='IVA 10.5%', width=100,
                            represent="%.2f", align="right")
-            gui.ListColumn(name=u'imp_trib', text='imp trib', width=100,
+            gui.ListColumn(name=u'imp_iva_5', text='IVA 21%', width=100,
+                           represent="%.2f", align="right")
+            gui.ListColumn(name=u'imp_iva_6', text='IVA 27%', width=100,
+                           represent="%.2f", align="right")
+            gui.ListColumn(name=u'imp_trib', text='Tributos', width=100,
                            represent="%.2f", align="right")
         gui.Button(label=u'Buscar', name=u'buscar', left='350', top='542', 
                    width='75', fgcolor=u'#4C4C4C', onclick=on_buscar_click)
