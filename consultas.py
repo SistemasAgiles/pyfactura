@@ -52,11 +52,71 @@ def on_tipo_doc_change(evt):
     elif ctrl.value == 99:
         mask = '#'
         value = "0"
-        on_nro_doc_change(evt)
+        #on_nro_doc_change(evt)
     else:
         mask = '########'
     panel['criterios']['nro_doc'].mask = mask
     panel['criterios']['nro_doc'].value = value
+
+def on_buscar_click(evt):
+    buscar()
+
+
+def buscar():
+    rg1361 = RG1361AFIP()
+    listado = mywin['panel']['listado']
+    listado.items.clear()
+
+    # obtengo criterio de busqueda:
+    tipo_doc = panel['criterios']['tipo_doc'].value
+    nro_doc = panel['criterios']['nro_doc'].value
+    nombre_cliente = panel['criterios']['nombre_cliente'].value        
+    tipo_cbte = panel['criterios']['tipo_cbte'].value
+    pto_vta = panel['criterios']['pto_vta'].value
+    nro_cbte_desde = panel['criterios']['nro_cbte_desde'].value
+    nro_cbte_hasta = panel['criterios']['nro_cbte_hasta'].value
+    fecha_cbte_hasta = panel['criterios']['fecha_cbte_hasta'].value
+    fecha_cbte_desde = panel['criterios']['fecha_cbte_desde'].value
+    cae = panel['criterios']['cae'].value
+
+    for reg in rg1361.Consultar(tipo_cbte=1):
+        # convertir a fecha el formato de AFIP
+        if not isinstance(reg['fecha_cbte'], datetime.date):
+            reg['fecha_cbte'] = datetime.datetime.strptime(reg['fecha_cbte'], "%Y%m%d").date()
+        # aplico filtros
+        if nro_doc is not None:
+            if reg['nro_doc'] != nro_doc and reg['tipo_doc'] != tipo_doc:
+                continue                
+        if nro_doc is not None:
+            if reg['nro_doc'] != nro_doc and reg['tipo_doc'] != tipo_doc:
+                continue
+        if nombre_cliente and not reg['nombre_cliente'].startswith(nombre_cliente):
+            print "filtrado por nombre"
+            continue
+        if tipo_cbte and reg['tipo_cbte'] != tipo_cbte:
+            print "filtrado por tipo_cbte"
+            continue
+        if pto_vta and reg['punto_vta'] != pto_vta:
+            print "filtrado por punto_vta", pto_vta, reg['punto_vta']
+            continue
+        if nro_cbte_desde and not reg['cbte_nro'] >= nro_cbte_desde:
+            print "filtrado por cbte_nro_desde", nro_cbte_desde, reg['cbte_nro']
+            continue
+        if nro_cbte_hasta and not reg['cbte_nro'] <= nro_cbte_hasta:
+            print "filtrado por cbte_nro_hasta", nro_cbte_hasta, reg['cbte_nro']
+            continue
+        if fecha_cbte_desde and not reg['fecha_cbte'] >= fecha_cbte_desde:
+            print "filtrado por fecha_cbte_desde", fecha_cbte_desde, reg['fecha_cbte']
+            continue
+        if fecha_cbte_hasta and not reg['fecha_cbte'] <= fecha_cbte_hasta:
+            print "filtrado por fecha_cbte_hasta", fecha_cbte_hasta, reg['fecha_cbte']
+            continue
+        if cae and reg['cae'] != cae:
+            print "filtrado por cae", cae, reg['cae']
+            continue
+        # agrego el registro al listado:
+        listado.items[reg['id']] = reg
+
 
 def exportar(evt):
     from pyafipws.formatos.formato_csv import desaplanar, aplanar, escribir
@@ -121,7 +181,7 @@ with gui.Window(name='consultas',
             gui.ListColumn(name=u'imp_trib', text='imp trib', width=100,
                            represent="%.2f", align="right")
         gui.Button(label=u'Buscar', name=u'buscar', left='350', top='542', 
-                   width='75', fgcolor=u'#4C4C4C', )
+                   width='75', fgcolor=u'#4C4C4C', onclick=on_buscar_click)
         gui.Label(name='label_22_147', left='12', top='144', 
                   text=u'Resultados:', )
         with gui.Panel(label=u'Criterios de B\xfasqueda:', name='criterios', 
@@ -217,15 +277,6 @@ def main(callback=None):
             panel['cargar'].onclick = lambda evt: callback(listado.get_selected_items()[0])
 
         mywin.show()
-        rg1361 = RG1361AFIP()
-        listado = mywin['panel']['listado']
-        listado.items.clear()
-        for reg in rg1361.Consultar(tipo_cbte=1):
-            # convertir a fecha el formato de AFIP
-            if not isinstance(reg['fecha_cbte'], datetime.date):
-                reg['fecha_cbte'] = datetime.datetime.strptime(reg['fecha_cbte'], "%Y%m%d")
-            listado.items[reg['id']] = reg
-
 
 if __name__ == "__main__":
     main()
