@@ -189,6 +189,11 @@ def on_borrar_click(evt):
 
 def on_consultas(evt):
     import consultas
+    # Workaround: recreate gui objects if the window was closed (TODO: Fix)
+    try:
+        gui.get("consultas").title
+    except:
+        reload(consultas)
     consultas.main(callback=cargar_factura)    
 
 def recalcular():
