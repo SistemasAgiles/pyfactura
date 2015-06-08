@@ -58,11 +58,7 @@ def on_tipo_doc_change(evt):
     panel['criterios']['nro_doc'].mask = mask
     panel['criterios']['nro_doc'].value = value
 
-def on_buscar_click(evt):
-    buscar()
-
-
-def buscar():
+def buscar(evt):
     rg1361 = RG1361AFIP()
     listado = mywin['panel']['listado']
     listado.items.clear()
@@ -140,6 +136,35 @@ def exportar(evt):
         filename = result[0]
         escribir(filas1, filename)
 
+def reporte(evt):
+    # elejir nombre de archivo:
+    result = gui.save_file(title='Guardar', filename="facturas-reporte.html",
+        wildcard='|'.join(["Archivos HTML (*.html)|*.html"]))
+    if result:
+        filename = result[0]
+        f = open(filename, "w")
+        f.write("<HTML><BODY><TABLE>\n")
+        f.write("<TR>\n")
+        for col in listado:
+            f.write("<TH>%s</TH>\n" % col.text)
+        f.write("</TR>\n")
+        for it in listado.items:
+            f.write("<TR>")
+            for col in listado:
+                if it[col.name] is None:
+                    v = ""
+                elif callable(col.represent):
+                    v = col.represent(it[col.name])
+                elif col.represent:
+                    v = col.represent % it[col.name]
+                else:
+                    v = it[col.name]
+                f.write("<TD>%s</TD>" % v)
+            f.write("</TR>\n")
+        f.write("</TR></TABLE></BODY></HTML>\n")
+        f.close()
+        
+
 # --- gui2py designer generated code starts ---
 
 with gui.Window(name='consultas', 
@@ -187,8 +212,8 @@ with gui.Window(name='consultas',
                            represent="%.2f", align="right")
             gui.ListColumn(name=u'imp_trib', text='Tributos', width=100,
                            represent="%.2f", align="right")
-        gui.Button(label=u'Buscar', name=u'buscar', left='350', top='542', 
-                   width='75', fgcolor=u'#4C4C4C', onclick=on_buscar_click)
+        gui.Button(label=u'Buscar', name=u'buscar', left='295', top='542', 
+                   width='75', default=True, onclick=buscar)
         gui.Label(name='label_22_147', left='12', top='144', 
                   text=u'Resultados:', )
         with gui.Panel(label=u'Criterios de B\xfasqueda:', name='criterios', 
@@ -247,10 +272,12 @@ with gui.Window(name='consultas',
                       left='423', top='63', width='47', text=u'Desde:', )
             gui.Label(id=1343, name='label_356_21_178_1343', height='17', 
                       left='593', top='64', width='44', text=u'Hasta:', )
-        gui.Button(label=u'Cargar', name=u'cargar', left='430', 
-                   top='542', width='93', fgcolor=u'#4C4C4C', )
-        gui.Button(label=u'Exportar', name=u'exportar', left='528', top='542', 
+        gui.Button(label=u'Cargar', name=u'cargar', left='379', top='542', 
+                   width='73', fgcolor=u'#4C4C4C', )
+        gui.Button(label=u'Exportar', name=u'exportar', left='458', top='542', 
                    width='75', fgcolor=u'#4C4C4C', onclick=exportar)
+        gui.Button(id=188, label=u'Reporte', name=u'reporte', left='542', 
+                   top='542', width='75', fgcolor=u'#4C4C4C',  onclick=reporte)
 
 # --- gui2py designer generated code ends ---
 
