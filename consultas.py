@@ -199,21 +199,21 @@ with gui.Window(name='consultas',
             gui.ListColumn(name=u'id_impositivo', text='Cond. IVA', width=50,
                            represent="%s", align="left")
             gui.ListColumn(name=u'imp_total', text='Total', width=100,
-                           represent="%.2f", align="right")
+                           represent=lambda x: locale.format("%.2f", x), align="right")
             gui.ListColumn(name=u'imp_op_ex', text='Exento', width=100,
-                           represent="%.2f", align="right")
+                           represent=lambda x: locale.format("%.2f", x), align="right")
             gui.ListColumn(name=u'imp_tot_conc', text='No Gravado', width=100,
-                           represent="%.2f", align="right")
+                           represent=lambda x: locale.format("%.2f", x), align="right")
             gui.ListColumn(name=u'imp_neto', text='Neto', width=100,
-                           represent="%.2f", align="right")
+                           represent=lambda x: locale.format("%.2f", x), align="right")
             gui.ListColumn(name=u'imp_iva_4', text='IVA 10.5%', width=100,
-                           represent="%.2f", align="right")
+                           represent=lambda x: locale.format("%.2f", x), align="right")
             gui.ListColumn(name=u'imp_iva_5', text='IVA 21%', width=100,
-                           represent="%.2f", align="right")
+                           represent=lambda x: locale.format("%.2f", x), align="right")
             gui.ListColumn(name=u'imp_iva_6', text='IVA 27%', width=100,
-                           represent="%.2f", align="right")
+                           represent=lambda x: locale.format("%.2f", x), align="right")
             gui.ListColumn(name=u'imp_trib', text='Tributos', width=100,
-                           represent="%.2f", align="right")
+                           represent=lambda x: locale.format("%.2f", x), align="right")
             gui.ListColumn(name=u'fecha_vto', text='Vto. CAE', align="left",
                            represent=lambda x: str(x) if x else "")
             gui.ListColumn(name=u'cae', text='CAE', width=50, align="right",
