@@ -111,7 +111,7 @@ def buscar(evt):
             print "filtrado por cae", cae, reg['cae']
             continue
         # agrego el registro al listado:
-        for it in reg['ivas']:
+        for it in reg.get('ivas', []):
             reg['imp_iva_%d' % it['iva_id']] = it['importe']
         listado.items[reg['id']] = reg
 
