@@ -74,12 +74,15 @@ def buscar(evt):
     fecha_cbte_hasta = panel['criterios']['fecha_cbte_hasta'].value
     fecha_cbte_desde = panel['criterios']['fecha_cbte_desde'].value
     cae = panel['criterios']['cae'].value
+    aceptado = panel['criterios']['aceptado'].value
 
     for reg in rg1361.Consultar(tipo_cbte=1):
         # convertir a fecha el formato de AFIP
         if not isinstance(reg['fecha_cbte'], datetime.date):
             reg['fecha_cbte'] = datetime.datetime.strptime(reg['fecha_cbte'], "%Y%m%d").date()
         # aplico filtros
+        if aceptado and reg['resultado'] != 'A':
+            continue
         if nro_doc is not None:
             if reg['nro_doc'] != nro_doc and reg['tipo_doc'] != tipo_doc:
                 continue                
@@ -212,6 +215,10 @@ with gui.Window(name='consultas',
                            represent="%.2f", align="right")
             gui.ListColumn(name=u'imp_trib', text='Tributos', width=100,
                            represent="%.2f", align="right")
+            gui.ListColumn(name=u'fecha_vto', text='Vto. CAE', align="left",
+                           represent=lambda x: str(x) if x else "")
+            gui.ListColumn(name=u'cae', text='CAE', width=50, align="right",
+                           represent=lambda x: str(x) if x else "")
         gui.Button(label=u'Buscar', name=u'buscar', left='295', top='542', 
                    width='75', default=True, onclick=buscar)
         gui.Label(name='label_22_147', left='12', top='144', 
@@ -264,10 +271,13 @@ with gui.Window(name='consultas',
                         value=12345678, )
             gui.Label(name='label_26_372_2499_2861', height='17', left='439', 
                       top='98', width='39', text=u'CAE:', )
-            gui.TextBox(name='cae', left='480', top='93', width='274', 
+            gui.TextBox(name='cae', left='480', top='93', width='153', 
                         text=u'123456789012345',
                         tooltip=u'CAE o c\xf3digo de barras', 
                         value=u'123456789012345', )
+            gui.CheckBox(label=u'Aceptado', name=u'aceptado', height='24', 
+                         left='655', top='94', width='114', 
+                         bgcolor=u'#E0DEDC', fgcolor=u'#4C4C4C', value=True, )
             gui.Label(id=1243, name='label_356_21_178_2591_1243', height='17', 
                       left='423', top='63', width='47', text=u'Desde:', )
             gui.Label(id=1343, name='label_356_21_178_1343', height='17', 
