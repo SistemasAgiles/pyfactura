@@ -12,7 +12,8 @@ __version__ = "0.7b"
 
 # Documentación: http://www.sistemasagiles.com.ar/trac/wiki/PyFactura
 
-import datetime     # base imports, used by some controls and event handlers
+import calendar
+import datetime
 import decimal
 import os
 import time
@@ -308,8 +309,13 @@ def main(callback=None):
         panel['criterios']['pto_vta'].value = None
         panel['criterios']['nro_cbte_desde'].value = None
         panel['criterios']['nro_cbte_hasta'].value = None
-        panel['criterios']['fecha_cbte_hasta'].value = None
-        panel['criterios']['fecha_cbte_desde'].value = None
+        # utilizar el mes actual (dia inicio y finalización):
+        hoy = datetime.date.today()
+        r = calendar.monthrange(hoy.year, hoy.month)
+        desde = datetime.date(hoy.year, hoy.month, r[0] + 1)
+        hasta = datetime.date(hoy.year, hoy.month, r[1])
+        panel['criterios']['fecha_cbte_hasta'].value = hasta
+        panel['criterios']['fecha_cbte_desde'].value = desde
         panel['criterios']['cae'].value = ""
         
         # mostrar la representación más amigable de los códigos de AFIP
