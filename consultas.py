@@ -66,7 +66,8 @@ def buscar(evt):
 
     # obtengo criterio de busqueda:
     tipo_doc = panel['criterios']['tipo_doc'].value
-    nro_doc = panel['criterios']['nro_doc'].value
+    nro_doc = panel['criterios']['nro_doc'].value.replace("-", "").strip()
+    nro_doc = int(nro_doc) if nro_doc else None
     nombre_cliente = panel['criterios']['nombre_cliente'].value        
     tipo_cbte = panel['criterios']['tipo_cbte'].value
     pto_vta = panel['criterios']['pto_vta'].value
@@ -84,13 +85,10 @@ def buscar(evt):
         # aplico filtros
         if aceptado and reg['resultado'] != 'A':
             continue
-        if nro_doc is not None:
-            if reg['nro_doc'] != nro_doc and reg['tipo_doc'] != tipo_doc:
-                continue                
-        if nro_doc is not None:
-            if reg['nro_doc'] != nro_doc and reg['tipo_doc'] != tipo_doc:
-                continue
-        if nombre_cliente and not reg['nombre_cliente'].startswith(nombre_cliente):
+        if nro_doc and (reg['nro_doc'] != nro_doc or reg['tipo_doc'] != tipo_doc):
+            print "filtrado por nro_doc", tipo_doc, nro_doc
+            continue
+        if nombre_cliente and not reg['nombre_cliente'].lower().startswith(nombre_cliente.lower()):
             print "filtrado por nombre"
             continue
         if tipo_cbte and reg['tipo_cbte'] != tipo_cbte:
