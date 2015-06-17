@@ -179,7 +179,7 @@ with gui.Window(name='consultas',
     gui.StatusBar(name='statusbar_15_91', 
                   text=u'Servicio Web Factura Electr\xf3nica mercado interno (WSFEv1)', )
     with gui.Panel(label=u'', name='panel', image='', ):
-        gui.Image(name='image_507_571', height='36', left='17', top='535', 
+        gui.Image(name='image_507_571', height='36', left='17', top='545', 
                   width='238', filename='sistemas-agiles.png', )
         gui.Image(name='image_33_540', height='50', left='665', top='532', 
                   width='100', filename='logo-pyafipws.png', )
@@ -274,9 +274,8 @@ with gui.Window(name='consultas',
                         text=u'123456789012345',
                         tooltip=u'CAE o c\xf3digo de barras', 
                         value=u'123456789012345', )
-            gui.CheckBox(label=u'Aceptado', name=u'aceptado', height='24', 
-                         left='655', top='94', width='114', 
-                         bgcolor=u'#E0DEDC', fgcolor=u'#4C4C4C', value=True, )
+            gui.CheckBox(label=u'Aprobado', name=u'aceptado', height='24', 
+                         left='655', top='94', width='114', value=True, )
             gui.Label(id=1243, name='label_356_21_178_2591_1243', height='17', 
                       left='423', top='63', width='47', text=u'Desde:', )
             gui.Label(id=1343, name='label_356_21_178_1343', height='17', 

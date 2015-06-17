@@ -599,31 +599,31 @@ with gui.Window(name='mywin', visible=False,
         with gui.Panel(label=u'Cliente:', name='cliente', 
                        height='114', left='8', top='6', width='633', image='', ):
             gui.Label(name='label_182_163', height='25', left='11', 
-                      top='21', width='38', text=u'Documento:', )
+                      top='24', width='38', text=u'Documento:', )
             gui.ComboBox(name='tipo_doc', text=u'CF', 
-                         left='111', top='16', width='78', 
+                         left='111', top='20', width='78', 
                          value=80, onchange=on_tipo_doc_change,
                          items=datos.TIPO_DOC_MAP, )
             gui.TextBox(mask='##-########-#', name='nro_doc', 
-                        left='192', top='17', width='110', 
+                        left='192', top='20', width='110', 
                         value=u'20-26756539-3', onblur=on_nro_doc_change,
                         )
             gui.Label(name='label_268_164', height='31', left='316', 
-                      top='22', width='61', text=u'Nombre:', )
+                      top='24', width='61', text=u'Nombre:', )
             gui.TextBox(name='nombre', 
-                        left='383', top='17', width='240', 
+                        left='383', top='20', width='240', 
                         value=u'Mariano Reingart', )
-            gui.Label(name='label_322_165', left='10', top='50', 
-                      width='72', text=u'Domicilio', )
+            gui.Label(name='label_322_165', left='10', top='52', 
+                      width='72', text=u'Domicilio:', )
             gui.TextBox(name='domicilio', multiline=True, 
-                        height='57', left='112', top='49', width='189', 
+                        height='55', left='112', top='52', width='189', 
                         value=u'Castagna 4942', )
             gui.Label(name='label_530_167', left='321', top='85', 
                       width='58', text=u'E-Mail:', )
             gui.Label(name='label_530_167_1258', height='17', left='321', 
                       top='56', width='58', text=u'IVA:', )
             gui.ComboBox(name='cat_iva', text=u'Responsable Inscripto', 
-                         left='383', top='49', width='190', editable=False,
+                         left='383', top='51', width='190', editable=False,
                          onchange=on_cat_iva_change,
                          items={1: u"Responsable Inscripto", 4: u"Exento", 
                                 5: u"Consumidor Final", 6: u"Monotributo",
@@ -819,25 +819,25 @@ with gui.Window(name='mywin', visible=False,
             gui.Button(label=u'Enviar', name=u'enviar', left='270', top='53', 
                        width='55', onclick=enviar)
 
-        gui.Label(id=1892, name='label_469_345_1892', alignment='right', 
-                  height='17', left='466', top='488', width='41', 
+        gui.Label(name='label_469_345_1892', alignment='right', 
+                  height='17', left='466', top='488', width='50', 
                   text=u'IVA:', )
         gui.TextBox(mask='#####.##', name=u'imp_iva', editable=False,
                     alignment='right', left='520', top='485', width='115',)
         gui.Label(name='label_469_345', alignment='right', height='17', 
-                  left='406', top='461', width='110', 
-                  text=u'Otros Tributos:', )
+                  left='466', top='461', width='50', 
+                  text=u'Tributos:', )
         gui.TextBox(mask='#####.##', name=u'imp_trib', editable=False,
                     alignment='right', left='520', top='455', width='115')
         gui.Label(name='label_469_345_226', alignment='right', 
-                  height='17', left='468', top='519', width='41', 
+                  height='17', left='480', top='519', width='36', 
                   text=u'Total:', )
         gui.TextBox(mask='#####.##', name=u'imp_total', alignment='right', 
                     left='520', top='515', width='115', editable=False)
-        gui.Image(name='image_507_571', height='36', left='394', top='600', 
-                  width='238', filename='sistemas-agiles.png', )
-        gui.Image(name='image_33_540', height='50', left='350', top='490', 
-                  width='100', filename='logo-pyafipws.png', )
+        gui.Image(name='image_507_571', height='27', left='350', top='514', 
+                  width='178', stretch=False, filename='sistemas-agiles.png', )
+        gui.Image(name='image_33_540', height='37', left='350', top='460', 
+                  width='75', stretch=False, filename='logo-pyafipws.png', )
         gui.Button(label=u'Grabar', name=u'grabar', 
                    left='350', top='542', width='75', onclick=grabar)
         gui.Button(label=u'Limpiar', name=u'limpiar', left='430', top='542', 
