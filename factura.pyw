@@ -8,7 +8,7 @@ from __future__ import with_statement   # for python 2.5 compatibility
 __author__ = "Mariano Reingart (reingart@gmail.com)"
 __copyright__ = "Copyright (C) 2014- Mariano Reingart"
 __license__ = "LGPL 3.0"
-__version__ = "0.9b"
+__version__ = "0.9c"
 
 # Documentación: http://www.sistemasagiles.com.ar/trac/wiki/PyFactura
 
@@ -249,9 +249,13 @@ def obtener_cae(evt):
     imp_op_ex = "%0.2f" % panel['notebook']['alicuotas_iva']['imp_op_ex'].value
     imp_tot_conc = "%0.2f" % panel['notebook']['alicuotas_iva']['imp_tot_conc'].value
     imp_total = "%0.2f" % panel['imp_total'].value
-    fecha_venc_pago = panel['periodo']['fecha_venc_pago'].value.strftime("%Y%m%d")
-    fecha_serv_desde = panel['periodo']['fecha_desde'].value.strftime("%Y%m%d")
-    fecha_serv_hasta = panel['periodo']['fecha_hasta'].value.strftime("%Y%m%d")
+    # solo informar si es servicio (no informar para productos)
+    if concepto > 1:
+        fecha_venc_pago = panel['periodo']['fecha_venc_pago'].value.strftime("%Y%m%d")
+        fecha_serv_desde = panel['periodo']['fecha_desde'].value.strftime("%Y%m%d")
+        fecha_serv_hasta = panel['periodo']['fecha_hasta'].value.strftime("%Y%m%d")
+    else:
+        fecha_venc_pago = fecha_serv_desde = fecha_serv_hasta = None
     moneda_id = 'PES'; moneda_ctz = '1.000'
     wsfev1.CrearFactura(concepto, tipo_doc, nro_doc, tipo_cbte, punto_vta,
         cbte_nro, cbte_nro, imp_total, imp_tot_conc, imp_neto,
@@ -472,6 +476,8 @@ def grabar(evt):
         gui.alert(u"Información del cliente incompleta", "Imposible Guardar")
     elif not grilla.items:
         gui.alert(u"No ingresó artículos", "Imposible Guardar")
+    elif not panel['conceptos']['productos'].value and not panel['conceptos']['servicios'].value:
+        gui.alert(u"Debe seleccionar productos, servicios o ambos", "Imposible Guardar")
     elif panel['imp_total'].value == 0 and not gui.confirm(u"¿Importe 0?", "Confirmar Guardar"):
         pass
     else:
