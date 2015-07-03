@@ -8,7 +8,7 @@ from __future__ import with_statement   # for python 2.5 compatibility
 __author__ = "Mariano Reingart (reingart@gmail.com)"
 __copyright__ = "Copyright (C) 2014- Mariano Reingart"
 __license__ = "LGPL 3.0"
-__version__ = "0.9c"
+__version__ = "0.9d"
 
 # Documentación: http://www.sistemasagiles.com.ar/trac/wiki/PyFactura
 
@@ -373,6 +373,12 @@ def crear_factura(comp, imprimir=True):
 
     comp.EstablecerParametro("email", email)
     comp.EstablecerParametro("cat_iva", cat_iva)
+
+    if panel['aut']['aceptado'].value:
+        resultado = "A"
+    elif panel['aut']['rechazado'].value:
+        resultado = "R"
+    comp.EstablecerParametro("resultado", resultado)
     
     if False:
         tipo = 91
