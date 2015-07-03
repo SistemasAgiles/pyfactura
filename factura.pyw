@@ -586,7 +586,8 @@ def enviar(evt):
     
     pyemail = PyEmail()
     pyemail.Conectar(conf_mail['servidor'], 
-                     conf_mail['usuario'], conf_mail['clave'], )
+                     conf_mail['usuario'], conf_mail['clave'], 
+                     conf_mail['puerto'],)
     if 'cc' in conf_mail:
         pyemail.AgregarCC(conf_mail['cc'])
     if 'bcc' in conf_mail:
