@@ -28,9 +28,11 @@ long_desc = "Aplicativo visual para generación Facturas Electrónicas AFIP"
 data_files = [
     (".", ["licencia.txt", "sistemas-agiles.png", "logo-pyafipws.png"]),
     ("conf", ["conf/rece.ini", "conf/geotrust.crt", "conf/afip_ca_info.crt", ]),
-    #(".", ["reingart.crt", "reingart.key", ]),
     ("cache", glob.glob("cache/*")),
     ]
+
+if os.path.exists("reingart.crt"):
+    data_files.append(("conf", ["reingart.crt", "reingart.key"]))
 
 HOMO = False
 
@@ -95,7 +97,7 @@ if 'py2exe' in sys.argv:
         Target(module=factura, script='factura.pyw'),
         ]
     data_files += [
-        ("plantillas", ["plantillas/logo.png", "plantillas/factura.csv", "plantillas/recibo.csv",]),
+        ("plantillas", ["plantillas/logo.png", "plantillas/afip.png", "plantillas/factura.csv", "plantillas/recibo.csv",]),
         ("cache", glob.glob("cache/*")),
         #("datos", ["datos/facturas.csv", "datos/facturas.json", "datos/facturas.txt", ])
         (".", [
