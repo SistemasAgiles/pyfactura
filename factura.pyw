@@ -200,7 +200,7 @@ def recalcular():
     tipo_cbte = panel['tipo_cbte'].value
     neto_iva = {}
     imp_iva = {}
-    tasas_iva = {1: None, 2: None, 3: 0, 4: 10.5, 5: 21, 6: 27}
+    tasas_iva = {1: None, 2: None, 3: 0, 4: 10.5, 5: 21, 6: 27, 8: 5, 9: 2.5}
     total = 0.
     for it in grilla.items:
         iva_id = it['iva_id']
@@ -728,7 +728,7 @@ with gui.Window(name='mywin', visible=False,
                     gui.GridColumn(align='center', name=u'iva_id', represent='%s', 
                                    choices={1: "no gravado", 2: "exento", 
                                             3: "0%", 4: "10.5%", 5: "21%" , 
-                                            6: "27%"},
+                                            6: "27%", 8: "5%", 9: "2.5%"},
                                    text=u'IVA', type='choice', width=50, )
                     gui.GridColumn(align='right', name=u'subtotal', type='double', 
                                    represent=u'%0.2f', text=u'Subtotal', 
@@ -746,7 +746,8 @@ with gui.Window(name='mywin', visible=False,
                                   sort_column=1, ):
                     gui.ListColumn(name=u'iva_id', text=u'ID', width=40, 
                                    represent=lambda x: {3: "0%", 4: "10.5%", 
-                                                        5: "21%", 6: "27%"}[x])
+                                                        5: "21%", 6: "27%",
+                                                        8: "5%", 9: "2.5%"}[x])
                     gui.ListColumn(name=u'alicuota', text=u'Al\xedcuota', 
                                    align="right", width=75, represent="%.2f")
                     gui.ListColumn(name=u'base_imp', text=u'Base Imp.', 
