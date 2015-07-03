@@ -197,6 +197,7 @@ def on_consultas(evt):
     consultas.main(callback=cargar_factura)    
 
 def recalcular():
+    tipo_cbte = panel['tipo_cbte'].value
     neto_iva = {}
     imp_iva = {}
     tasas_iva = {1: None, 2: None, 3: 0, 4: 10.5, 5: 21, 6: 27}
@@ -210,7 +211,7 @@ def recalcular():
         total += subtotal
         if iva_id in tasas_iva:
             neto_iva[iva_id] = neto_iva.get(iva_id, 0.) + subtotal
-            if tasas_iva[iva_id] is not None:
+            if tasas_iva[iva_id] is not None and not tipo_cbte in datos.CLASE_C:
                 iva_liq = subtotal * tasas_iva[iva_id] / 100.
                 imp_iva[iva_id] = imp_iva.get(iva_id, 0.) + iva_liq
                 it['imp_iva'] = iva_liq

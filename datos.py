@@ -19,3 +19,4 @@ TIPO_CBTE_MAP = {1: u'Factura A', 2: u'Nota de Débito A',
                  53: u'Nota de Crédito M', 54: u'Recibo M',
                  }
 
+CLASE_C = 11, 12, 13, 15
