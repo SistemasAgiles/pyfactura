@@ -512,6 +512,17 @@ def cdate(s):
         return None
 
 def cargar_factura(f):
+    # cargar datos de cliente (dispara eventos)
+    nro_doc = str(f["nro_doc"])
+    if f["tipo_doc"] == 80 and len(nro_doc) == 11:
+        nro_doc = "%2s-%6s-%1s" % (nro_doc[0:2], nro_doc[2:10], nro_doc[10:])
+    panel['cliente']['tipo_doc'].value = f["tipo_doc"]
+    panel['cliente']['nro_doc'].value = nro_doc
+    panel['cliente']['nombre'].value = f["nombre_cliente"]
+    panel['cliente']['email'].value = f["email"]
+    panel['cliente']['cat_iva'].value = f["cat_iva"] or None 
+    panel['cliente']['domicilio'].value = f["domicilio_cliente"]
+    # cargar datos del encabezado del comprobante
     panel['tipo_cbte'].value = f["tipo_cbte"]
     panel['pto_vta'].value = f["punto_vta"]
     panel['nro_cbte'].value = f["cbte_nro"]
@@ -519,11 +530,6 @@ def cargar_factura(f):
     panel['fecha_cbte'].value = cdate(f["fecha_cbte"])
     panel['conceptos']['productos'].value = f["concepto"] & 1
     panel['conceptos']['servicios'].value = f["concepto"] & 2
-    panel['cliente']['tipo_doc'].value = f["tipo_doc"]
-    nro_doc = str(f["nro_doc"])
-    if f["tipo_doc"] == 80 and len(nro_doc) == 11:
-        nro_doc = "%2s-%6s-%1s" % (nro_doc[0:2], nro_doc[2:10], nro_doc[10:])
-    panel['cliente']['nro_doc'].value = nro_doc
     panel['notebook']['alicuotas_iva']['imp_neto'].value = float(f["imp_neto"])
     panel['imp_iva'].value = float(f["imp_iva"])
     panel['imp_trib'].value = float(f["imp_trib"])
@@ -535,10 +541,6 @@ def cargar_factura(f):
     panel['periodo']['fecha_hasta'].value = cdate(f["fecha_serv_hasta"])
     panel['notebook']['obs']['generales'].value = f["obs_generales"]
     panel['notebook']['obs']['comerciales'].value = f["obs_comerciales"]
-    panel['cliente']['nombre'].value = f["nombre_cliente"]
-    panel['cliente']['email'].value = f["email"]
-    panel['cliente']['cat_iva'].value = f["cat_iva"] or None 
-    panel['cliente']['domicilio'].value = f["domicilio_cliente"]
     panel['conceptos']['forma_pago'].text = f["forma_pago"]
     panel['notebook']['obs']['afip'].value = f.get("motivo_obs") or ""
     panel['aut']['cae'].value = f.get("cae") or ""
