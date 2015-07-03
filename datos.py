@@ -14,5 +14,8 @@ TIPO_CBTE_MAP = {1: u'Factura A', 2: u'Nota de Débito A',
                  6: u'Factura B', 7: u'Nota de Débito B', 
                  8: u'Nota de Crédito B', 9: 'Recibo B',
                  11: u'Factura C', 12: u'Nota de Débito C', 
-                 13: u'Nota de Crédito C', 15: 'Recibo C', }
+                 13: u'Nota de Crédito C', 15: 'Recibo C', 
+                 51: u'Factura M', 52: u'Nota de Débito M',
+                 53: u'Nota de Crédito M', 54: u'Recibo M',
+                 }
 
