@@ -199,7 +199,7 @@ def on_consultas(evt):
 def recalcular():
     neto_iva = {}
     imp_iva = {}
-    tasas_iva = {4: 10.5, 5: 21, 6: 27}
+    tasas_iva = {1: None, 2: None, 3: 0, 4: 10.5, 5: 21, 6: 27}
     total = 0.
     for it in grilla.items:
         iva_id = it['iva_id']
@@ -210,16 +210,19 @@ def recalcular():
         total += subtotal
         if iva_id in tasas_iva:
             neto_iva[iva_id] = neto_iva.get(iva_id, 0.) + subtotal
-            iva_liq = subtotal * tasas_iva[iva_id] / 100.
-            imp_iva[iva_id] = imp_iva.get(iva_id, 0.) + iva_liq
-            it['imp_iva'] = iva_liq
+            if tasas_iva[iva_id] is not None:
+                iva_liq = subtotal * tasas_iva[iva_id] / 100.
+                imp_iva[iva_id] = imp_iva.get(iva_id, 0.) + iva_liq
+                it['imp_iva'] = iva_liq
     listado = panel['notebook']['alicuotas_iva']['listado']
     listado.items.clear()
     for iva_id, iva_liq in imp_iva.items():
         listado.items[str(iva_id)] = {'iva_id': iva_id, 'importe': iva_liq,
                                        'base_imp': neto_iva[iva_id],
                                        'alicuota': tasas_iva[iva_id]}
-    neto = sum(neto_iva.values(), 0.)
+    # excluir exento y no gravado del calculo del neto:
+    neto = sum([nt for iva_id, nt in neto_iva.items() 
+                    if tasas_iva.get(iva_id) is not None])
     panel['notebook']['alicuotas_iva']['imp_neto'].value = neto
     panel['notebook']['alicuotas_iva']['imp_tot_conc'].value = neto_iva.get(1, 0)
     panel['notebook']['alicuotas_iva']['imp_op_ex'].value = neto_iva.get(2, 0)
