@@ -455,7 +455,10 @@ def generar_pdf(evt, mostrar=True):
         salida = fact['pdf']
     else:
         # genero el nombre de archivo según datos de factura
-        d = os.path.join(conf_fact.get('directorio', "."), fact['fecha_cbte'])
+        d = conf_fact.get('directorio', ".")
+        clave_subdir = conf_fact.get('subdirectorio','fecha_cbte')
+        if clave_subdir:
+            d = os.path.join(d, fact[clave_subdir])
         if not os.path.isdir(d):
             os.makedirs(d)
         fs = conf_fact.get('archivo','numero').split(",")
