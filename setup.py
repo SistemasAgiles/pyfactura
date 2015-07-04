@@ -68,7 +68,7 @@ if 'py2exe' in sys.argv:
             'dll_excludes': ["mswsock.dll", "powrprof.dll", "KERNELBASE.dll", 
                          "API-MS-Win-Core-LocalRegistry-L1-1-0.dll",
                          "API-MS-Win-Core-ProcessThreads-L1-1-0.dll",
-                         "API-MS-Win-Security-Base-L1-1-0.dll"
+                         "API-MS-Win-Security-Base-L1-1-0.dll", "crypt32.dll",
                          ],
             'skip_archive': True,
             }
