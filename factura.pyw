@@ -23,7 +23,7 @@ from ConfigParser import SafeConfigParser
 import gui          # import gui2py package (shortcuts)
 
 from pyafipws.padron import PadronAFIP
-from pyafipws.rg1361 import RG1361AFIP
+from pyafipws.sired import SIRED
 from pyafipws.wsaa import WSAA
 from pyafipws.wsfev1 import WSFEv1
 from pyafipws.pyfepdf import FEPDF
@@ -307,14 +307,14 @@ def obtener_cae(evt):
         gui.alert(wsfev1.ErrMsg, u"Mensajes Error AFIP")
 
     # actualizar registro
-    rg1361.EstablecerParametro("cae", wsfev1.CAE)
-    rg1361.EstablecerParametro("fecha_vto", wsfev1.Vencimiento)
-    rg1361.EstablecerParametro("motivo_obs", wsfev1.Obs)
-    rg1361.EstablecerParametro("resultado", wsfev1.Resultado)
-    rg1361.EstablecerParametro("reproceso", wsfev1.Reproceso)
-    rg1361.EstablecerParametro("err_code", wsfev1.ErrCode)
-    rg1361.EstablecerParametro("err_msg", wsfev1.ErrMsg)
-    rg1361.ActualizarFactura(id_factura)
+    sired.EstablecerParametro("cae", wsfev1.CAE)
+    sired.EstablecerParametro("fecha_vto", wsfev1.Vencimiento)
+    sired.EstablecerParametro("motivo_obs", wsfev1.Obs)
+    sired.EstablecerParametro("resultado", wsfev1.Resultado)
+    sired.EstablecerParametro("reproceso", wsfev1.Reproceso)
+    sired.EstablecerParametro("err_code", wsfev1.ErrCode)
+    sired.EstablecerParametro("err_msg", wsfev1.ErrMsg)
+    sired.ActualizarFactura(id_factura)
 
     if wsfev1.Resultado == "A":
         panel['aut']['imprimir'].enabled = True
@@ -495,15 +495,15 @@ def grabar(evt):
         pass
     else:
         padron.Guardar(tipo_doc, nro_doc, denominacion, cat_iva, direccion, email)
-        crear_factura(rg1361, imprimir=False)
-        id_factura = rg1361.GuardarFactura()
+        crear_factura(sired, imprimir=False)
+        id_factura = sired.GuardarFactura()
         habilitar(False)
 
 def cargar(evt):
     if not gui.confirm(u"¿Se restableceran todos los campos?", u"Cargar última factura"):
         return
-    rg1361.ObtenerFactura()
-    f = rg1361.factura
+    sired.ObtenerFactura()
+    f = sired.factura
     cargar_factura(f)
 
 def cdate(s):
@@ -944,7 +944,7 @@ if __name__ == "__main__":
         # inicializo los componenetes de negocio:
 
         padron = PadronAFIP()
-        rg1361 = RG1361AFIP()
+        sired = SIRED()
         wsaa = WSAA()
         wsfev1 = WSFEv1()
         ta = wsaa.Autenticar("wsfe", cert, privatekey, wsaa_url, cache="cache")

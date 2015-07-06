@@ -24,7 +24,7 @@ from ConfigParser import SafeConfigParser
 import gui          # import gui2py package (shortcuts)
 
 from pyafipws.padron import PadronAFIP
-from pyafipws.rg1361 import RG1361AFIP
+from pyafipws.sired import SIRED
 from pyafipws.wsaa import WSAA
 from pyafipws.wsfev1 import WSFEv1
 from pyafipws.pyfepdf import FEPDF
@@ -60,7 +60,7 @@ def on_tipo_doc_change(evt):
     panel['criterios']['nro_doc'].value = value
 
 def buscar(evt):
-    rg1361 = RG1361AFIP()
+    sired = SIRED()
     listado = mywin['panel']['listado']
     listado.items.clear()
 
@@ -78,7 +78,7 @@ def buscar(evt):
     cae = panel['criterios']['cae'].value
     aceptado = panel['criterios']['aceptado'].value
 
-    for reg in rg1361.Consultar(tipo_cbte=1):
+    for reg in sired.Consultar(tipo_cbte=1):
         # convertir a fecha el formato de AFIP
         if not isinstance(reg['fecha_cbte'], datetime.date):
             reg['fecha_cbte'] = datetime.datetime.strptime(reg['fecha_cbte'], "%Y%m%d").date()
