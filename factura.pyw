@@ -8,7 +8,7 @@ from __future__ import with_statement   # for python 2.5 compatibility
 __author__ = "Mariano Reingart (reingart@gmail.com)"
 __copyright__ = "Copyright (C) 2014- Mariano Reingart"
 __license__ = "LGPL 3.0"
-__version__ = "0.9d"
+__version__ = "0.9e"
 
 # Documentación: http://www.sistemasagiles.com.ar/trac/wiki/PyFactura
 
@@ -209,6 +209,7 @@ def recalcular():
         subtotal = qty * precio
         it['subtotal'] = subtotal
         total += subtotal
+        it['imp_iva'] = None
         if iva_id in tasas_iva:
             neto_iva[iva_id] = neto_iva.get(iva_id, 0.) + subtotal
             if tasas_iva[iva_id] is not None and not tipo_cbte in datos.CLASE_C:
@@ -415,7 +416,7 @@ def crear_factura(comp, imprimir=True):
         imp_iva = it['imp_iva'] or 0
         subtotal = it['subtotal'] or 0
         # no discriminar IVA si no es Factura A:
-        if tipo_cbte not in (1, 2, 3, 4) and imprimir:
+        if tipo_cbte not in (1, 2, 3, 4, 51, 52, 53, 54) and imprimir:
             precio += imp_iva / qty
             subtotal += imp_iva
         despacho = ""
