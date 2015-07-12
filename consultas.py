@@ -7,7 +7,7 @@ from __future__ import with_statement   # for python 2.5 compatibility
 
 __author__ = "Mariano Reingart (reingart@gmail.com)"
 __copyright__ = "Copyright (C) 2015- Mariano Reingart"
-__license__ = "LGPL 3.0"
+__license__ = "GPL 3.0+"
 __version__ = "0.7b"
 
 # Documentación: http://www.sistemasagiles.com.ar/trac/wiki/PyFactura
