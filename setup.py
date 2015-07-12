@@ -39,7 +39,7 @@ HOMO = False
 # build a one-click-installer for windows:
 if 'py2exe' in sys.argv:
     import py2exe
-    from nsis import build_installer, Target
+    from pyafipws.nsis import build_installer, Target
 
     # includes for py2exe
     includes=['email.generator', 'email.iterators', 'email.message', 'email.utils',  'email.mime.text', 'email.mime.application', 'email.mime.multipart']
