@@ -8,7 +8,7 @@ from __future__ import with_statement   # for python 2.5 compatibility
 __author__ = "Mariano Reingart (reingart@gmail.com)"
 __copyright__ = "Copyright (C) 2014- Mariano Reingart"
 __license__ = "GPL 3.0+"
-__version__ = "0.9e"
+__version__ = "0.9f"
 
 # Documentación: http://www.sistemasagiles.com.ar/trac/wiki/PyFactura
 
@@ -211,9 +211,13 @@ def recalcular():
         total += subtotal
         it['imp_iva'] = None
         if iva_id in tasas_iva:
-            neto_iva[iva_id] = neto_iva.get(iva_id, 0.) + subtotal
+            if not iva_incluido or tasas_iva[iva_id] is None:
+                neto_item = subtotal
+            else:
+                neto_item = subtotal / (100. + tasas_iva[iva_id]) * 100.
+            neto_iva[iva_id] = neto_iva.get(iva_id, 0.) + neto_item
             if tasas_iva[iva_id] is not None and not tipo_cbte in datos.CLASE_C:
-                iva_liq = subtotal * tasas_iva[iva_id] / 100.
+                iva_liq = neto_item * tasas_iva[iva_id] / 100.
                 imp_iva[iva_id] = imp_iva.get(iva_id, 0.) + iva_liq
                 it['imp_iva'] = iva_liq
     listado = panel['notebook']['alicuotas_iva']['listado']
@@ -230,7 +234,9 @@ def recalcular():
     panel['notebook']['alicuotas_iva']['imp_op_ex'].value = neto_iva.get(2, 0)
     panel['imp_iva'].value = sum(imp_iva.values(), 0.)
     panel['imp_trib'].value = 0
-    panel['imp_total'].value = total + sum(imp_iva.values(), 0.)
+    if not iva_incluido:
+        total += sum(imp_iva.values(), 0.)
+    panel['imp_total'].value = total 
 
 def obtener_cae(evt):
     global id_factura
@@ -415,10 +421,11 @@ def crear_factura(comp, imprimir=True):
         iva_id = it['iva_id']
         imp_iva = it['imp_iva'] or 0
         subtotal = it['subtotal'] or 0
-        # no discriminar IVA si no es Factura A:
+        # no discriminar IVA si no es Factura clase A / M:
         if tipo_cbte not in (1, 2, 3, 4, 51, 52, 53, 54) and imprimir:
-            precio += imp_iva / qty
-            subtotal += imp_iva
+            if not iva_incluido:
+                precio += imp_iva / qty
+                subtotal += imp_iva
         despacho = ""
         comp.AgregarDetalleItem(u_mtx, cod_mtx, codigo, ds, qty, umed, 
                 precio, bonif, iva_id, imp_iva, subtotal, despacho)
@@ -904,6 +911,10 @@ if __name__ == "__main__":
         cuit_emisor = config.get('WSFEv1','CUIT')
         cat_iva_emisor = int(config.get('WSFEv1','CAT_IVA')) # 1: RI
         pto_vta_emisor = int(config.get('WSFEv1','PTO_VTA'))
+        if config.has_option('WSFEv1','IVA_INCLUIDO'):
+            iva_incluido = config.get('WSFEv1','IVA_INCLUIDO').lower() == "true"
+        else:
+            iva_incluido = False
         
         if config.has_section('FACTURA'):
             conf_fact = dict(config.items('FACTURA'))
