@@ -8,7 +8,7 @@ from __future__ import with_statement   # for python 2.5 compatibility
 __author__ = "Mariano Reingart (reingart@gmail.com)"
 __copyright__ = "Copyright (C) 2015- Mariano Reingart"
 __license__ = "GPL 3.0+"
-__version__ = "0.7b"
+__version__ = "0.7c"
 
 # Documentación: http://www.sistemasagiles.com.ar/trac/wiki/PyFactura
 
@@ -161,6 +161,8 @@ def reporte(evt):
                     v = col.represent % it[col.name]
                 else:
                     v = it[col.name]
+                if isinstance(v, unicode):
+                    v = v.encode("latin1", "ignore")
                 f.write("<TD>%s</TD>" % v)
             f.write("</TR>\n")
         f.write("</TR></TABLE></BODY></HTML>\n")
