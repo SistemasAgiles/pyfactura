@@ -771,14 +771,14 @@ with gui.Window(name='mywin', visible=False,
                 gui.Label(name='label_387_630', height='17', left='393', 
                           top='71', width='92', text=u'No Gravado:', )
                 gui.TextBox(name='imp_tot_conc', left='519', top='67', width='92',
-                            mask='#######.##', alignment='right', editable=False)
+                            mask='#############.##', alignment='right', editable=False)
                 gui.Label(name='label_387_542', height='17', left='393', 
                           top='40', width='99', text=u'Neto Gravado:', )
-                gui.TextBox(name='imp_neto', mask='#######.##', alignment='right', 
+                gui.TextBox(name='imp_neto', mask='#############.##', alignment='right', 
                             left='519', top='36', width='92', editable=False)
                 gui.Label(name='label_387', left='395', top='100', 
                           text=u'Exento:', )
-                gui.TextBox(name='imp_op_ex',  mask='#######.##', alignment='right', 
+                gui.TextBox(name='imp_op_ex',  mask='#############.##', alignment='right', 
                             left='519', top='97', width='92', editable=False)
             with gui.TabPanel(id=869, name='tributos', selected=False, 
                               text=u'Otros tributos', ):
@@ -795,7 +795,7 @@ with gui.Window(name='mywin', visible=False,
                     gui.GridColumn(name='desc', text=u'Descripci\xf3n', 
                                    width=200, type='text', )
                     gui.GridColumn(name='base_imp', text=u'Base Imp.', 
-                                   width=75, type='double', format='11,2',)
+                                   width=75, type='double', format='15,2',)
                     gui.GridColumn(name='alic', text=u'Al\xedcuota', width=75,
                                    type='double', format='3,2',)
                     gui.GridColumn(name='importe', text=u'Importe', width=125,
@@ -853,17 +853,17 @@ with gui.Window(name='mywin', visible=False,
         gui.Label(name='label_469_345_1892', alignment='right', 
                   height='17', left='466', top='488', width='50', 
                   text=u'IVA:', )
-        gui.TextBox(mask='#####.##', name=u'imp_iva', editable=False,
+        gui.TextBox(mask='#############.##', name=u'imp_iva', editable=False,
                     alignment='right', left='520', top='485', width='115',)
         gui.Label(name='label_469_345', alignment='right', height='17', 
                   left='466', top='461', width='50', 
                   text=u'Tributos:', )
-        gui.TextBox(mask='#####.##', name=u'imp_trib', editable=False,
+        gui.TextBox(mask='#############.##', name=u'imp_trib', editable=False,
                     alignment='right', left='520', top='455', width='115')
         gui.Label(name='label_469_345_226', alignment='right', 
                   height='17', left='480', top='519', width='36', 
                   text=u'Total:', )
-        gui.TextBox(mask='#####.##', name=u'imp_total', alignment='right', 
+        gui.TextBox(mask='#############.##', name=u'imp_total', alignment='right', 
                     left='520', top='515', width='115', editable=False)
         gui.Image(name='image_507_571', height='27', left='350', top='514', 
                   width='178', stretch=False, filename='sistemas-agiles.png', )
