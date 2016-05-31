@@ -8,7 +8,7 @@ from __future__ import with_statement   # for python 2.5 compatibility
 __author__ = "Mariano Reingart (reingart@gmail.com)"
 __copyright__ = "Copyright (C) 2014- Mariano Reingart"
 __license__ = "GPL 3.0+"
-__version__ = "0.9f"
+__version__ = "0.9g"
 
 # Documentación: http://www.sistemasagiles.com.ar/trac/wiki/PyFactura
 
@@ -124,6 +124,11 @@ def on_tipo_cbte_change(evt):
             nro_cbte = -1
         nro_cbte = int(nro_cbte) + 1
         panel['nro_cbte'].value = nro_cbte
+
+def on_servicios_change(evt):
+    # habilitar fechas de servicio solo si corresponde:
+    panel['periodo'].enabled = evt.target.value
+    
 
 def limpiar(evt, confirmar=False):
     if confirmar:
@@ -694,6 +699,7 @@ with gui.Window(name='mywin', visible=False,
                          )
             gui.CheckBox(label=u'Servicios', name='servicios', left='132', 
                          top='24', width='110', value=True, 
+                         onclick=on_servicios_change,
                          )
             gui.Label(name='label_182_163', height='25', left='11', 
                       top='55', width='42', text=u'Forma Pago:', )
