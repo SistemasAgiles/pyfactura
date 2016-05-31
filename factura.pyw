@@ -73,17 +73,7 @@ def on_nro_doc_change(evt):
             try:
                 cat_iva = int(padron.cat_iva)
             except ValueError:
-                cat_iva = None
-            if cat_iva:
                 pass
-            elif padron.imp_iva in ('AC', 'S'):
-                cat_iva = 1  # RI
-            elif padron.imp_iva == 'EX':
-                cat_iva = 4  # EX
-            elif padron.monotributo:
-                cat_iva = 6  # MT
-            else:
-                cat_iva = 5  # CF
             padron.ConsultarDomicilios(doc_nro, tipo_doc)
             # tomar el primer domicilio o consultar con la API de AFIP:
             for domicilio in padron.domicilios:
@@ -232,6 +222,18 @@ def recuperar(tipo_cbte=None, punto_vta=None, cbte_desde=None, cbte_hasta=None):
                 factura["motivo_obs"] = wsfev1.Obs
                 factura["fecha_vto"] = datetime.datetime.strptime(
                                          wsfev1.Vencimiento, "%Y%m%d").date()
+                # obtener datos del cliente desde el padrón
+                if padron.Buscar(factura["nro_doc"], factura["tipo_doc"]):
+                    factura["nombre_cliente"] = padron.denominacion
+                    try:
+                        factura["cat_iva"] = int(padron.cat_iva)
+                    except ValueError:
+                        pass
+                    if padron.Consultar(factura["nro_doc"]):
+                        if padron.domicilios:
+                            factura["domicilio_cliente"] = padron.domicilios[0]
+                    factura["email"] = padron.email or ""
+
                 # rearmar campos no informados en este Webservice:
                 factura["detalles"] = []
                 for i, iva in enumerate(factura["iva"]):
@@ -734,7 +736,7 @@ with gui.Window(name='mywin', visible=False,
                      text=u'', editable=False)
         gui.Label(name='label_356_21_178', height='17', left='290', 
                   top='130', width='20', text=u'N\xb0:', )
-        gui.TextBox(mask='##', name=u'pto_vta', alignment='right', 
+        gui.TextBox(mask='####', name=u'pto_vta', alignment='right', 
                     left='318', top='125', width='47', 
                     value=99, )
         gui.TextBox(mask='########', name=u'nro_cbte', alignment='right', 
