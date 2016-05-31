@@ -59,8 +59,8 @@ def on_tipo_doc_change(evt):
     panel['criterios']['nro_doc'].mask = mask
     panel['criterios']['nro_doc'].value = value
 
-def buscar(evt):
-    sired = SIRED()
+
+def buscar(evt, fn=SIRED().Consultar):
     listado = mywin['panel']['listado']
     listado.items.clear()
 
@@ -78,7 +78,10 @@ def buscar(evt):
     cae = panel['criterios']['cae'].value
     aceptado = panel['criterios']['aceptado'].value
 
-    for reg in sired.Consultar(tipo_cbte=1):
+    # utilizar la funcion para obtener los comprobantes (desde SIRED/WSFEv1)
+    kwargs = dict(tipo_cbte=tipo_cbte, punto_vta=pto_vta,
+                  cbte_desde=nro_cbte_desde, cbte_hasta=nro_cbte_hasta)
+    for reg in fn(**kwargs):
         # convertir a fecha el formato de AFIP
         if not isinstance(reg['fecha_cbte'], datetime.date):
             reg['fecha_cbte'] = datetime.datetime.strptime(reg['fecha_cbte'], "%Y%m%d").date()
@@ -113,7 +116,7 @@ def buscar(evt):
             print "filtrado por cae", cae, reg['cae']
             continue
         # agrego el registro al listado:
-        for it in reg.get('ivas', []):
+        for it in reg.get('ivas', reg.get('iva', [])):
             reg['imp_iva_%d' % it['iva_id']] = it['importe']
         listado.items[reg['id']] = reg
 
@@ -220,6 +223,8 @@ with gui.Window(name='consultas',
                            represent=lambda x: str(x) if x else "")
             gui.ListColumn(name=u'cae', text='CAE', width=50, align="right",
                            represent=lambda x: str(x) if x else "")
+        gui.Button(label=u'Recuperar', name=u'recuperar', left='205', top='542', 
+                   width='80', default=True)
         gui.Button(label=u'Buscar', name=u'buscar', left='295', top='542', 
                    width='75', default=True, onclick=buscar)
         gui.Label(name='label_22_147', left='12', top='144', 
@@ -246,7 +251,7 @@ with gui.Window(name='consultas',
                          items=[u'Factura A', u'Factura B', u'Factura C', ], )
             gui.Label(name='label_356_21_178', height='17', left='262', 
                       top='96', width='20', text=u'Hasta:', )
-            gui.TextBox(mask='##', name=u'pto_vta', alignment='right', 
+            gui.TextBox(mask='####', name=u'pto_vta', alignment='right', 
                         left='365', top='59', width='47', value=99, )
             gui.Label(name='label_356_21_155', height='17', left='15', 
                       top='96', width='60', text=u'Fecha:', )
@@ -296,7 +301,7 @@ mywin = gui.get("consultas")
 panel = mywin['panel']
 listado = panel['listado']
 
-def main(callback=None):
+def main(callback=None, recuperar_fn=None):
         global mywin, panel, listado
         # limpiar valores del diseñador:
         panel['criterios']['tipo_doc'].items = datos.TIPO_DOC_MAP
@@ -324,7 +329,8 @@ def main(callback=None):
 
         if callback:
             panel['cargar'].onclick = lambda evt: callback(listado.get_selected_items()[0])
-
+            panel['recuperar'].onclick = lambda evt: buscar(evt, recuperar_fn)
+            
         mywin.show()
 
 if __name__ == "__main__":

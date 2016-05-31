@@ -15,6 +15,7 @@ __version__ = "0.9g"
 import datetime     # base imports, used by some controls and event handlers
 import decimal
 import os
+import pprint
 import time
 import traceback
 import sys
@@ -192,6 +193,56 @@ def on_borrar_click(evt):
     if grilla.items:
         del grilla.items[-1]
 
+def recuperar(tipo_cbte=None, punto_vta=None, cbte_desde=None, cbte_hasta=None):
+    "Consultar y rearmar comprobantes registrados en el Webservice de AFIP"
+    title = __doc__
+    facturas = []
+    if not tipo_cbte:
+        gui.alert("Debe completar el tipo de comprobante", title)
+        ##tipo_cbte = 1
+    if not punto_vta:
+        gui.alert("Debe completar el punto de venta", title)
+        ##punto_vta = 1
+    if not cbte_desde:
+        gui.alert("Debe completar el número de comprobante inicial", title)
+        ##cbte_desde = 1
+    if not cbte_hasta:
+        gui.alert("Debe completar el número de comprobante final", title)
+        ##cbte_hasta = cbte_desde + 1
+    if all([tipo_cbte, punto_vta, cbte_desde, cbte_hasta]):
+        for cbte_nro in range(cbte_desde, cbte_hasta + 1):
+            print "Recuperando", tipo_cbte, punto_vta, cbte_nro, 
+            ok = wsfev1.CompConsultar(tipo_cbte, punto_vta, cbte_nro)        
+            print wsfev1.Resultado, wsfev1.CAE, wsfev1.Excepcion, wsfev1.ErrMsg
+            if not ok:
+                continue
+            factura = wsfev1.factura.copy()
+            if ok and factura:
+                pprint.pprint(factura)
+                factura["id"] = len(facturas) + 1
+                factura["cbte_nro"] = factura["cbt_desde"]
+                factura["nombre_cliente"] = ""
+                factura["id_impositivo"] = ""
+                factura["email"] = ""
+                factura["cat_iva"] = ""
+                factura["domicilio_cliente"] = ""
+                factura["obs_generales"] = ""
+                factura["obs_comerciales"] = ""
+                factura["forma_pago"] = ""
+                factura["motivo_obs"] = wsfev1.Obs
+                factura["fecha_vto"] = datetime.datetime.strptime(
+                                         wsfev1.Vencimiento, "%Y%m%d").date()
+                # rearmar campos no informados en este Webservice:
+                factura["detalles"] = []
+                for i, iva in enumerate(factura["iva"]):
+                    it = {'ds': "Art. %s" % (i + 1), "umed": 0, 'codigo': "",
+                      'qty': 1, 'precio': iva["base_imp"], 'bonif': 0,
+                      'iva_id': iva["iva_id"], 'imp_iva': iva["importe"], 
+                      'subtotal': iva["base_imp"] + iva["importe"]}
+                    factura["detalles"].append(it)
+                facturas.append(factura)
+    return facturas
+
 def on_consultas(evt):
     import consultas
     # Workaround: recreate gui objects if the window was closed (TODO: Fix)
@@ -199,7 +250,7 @@ def on_consultas(evt):
         gui.get("consultas").title
     except:
         reload(consultas)
-    consultas.main(callback=cargar_factura)    
+    consultas.main(callback=cargar_factura, recuperar_fn=recuperar)    
 
 def recalcular():
     tipo_cbte = panel['tipo_cbte'].value
@@ -350,9 +401,12 @@ def crear_factura(comp, imprimir=True):
     imp_op_ex = panel['notebook']['alicuotas_iva']['imp_op_ex'].value
     imp_tot_conc = panel['notebook']['alicuotas_iva']['imp_tot_conc'].value
     imp_total = panel['imp_total'].value
-    fecha_venc_pago = panel['periodo']['fecha_venc_pago'].value.strftime("%Y%m%d")
-    fecha_serv_desde = panel['periodo']['fecha_desde'].value.strftime("%Y%m%d")
-    fecha_serv_hasta = panel['periodo']['fecha_hasta'].value.strftime("%Y%m%d")
+    fecha = panel['periodo']['fecha_venc_pago'].value
+    fecha_venc_pago = fecha.strftime("%Y%m%d") if fecha else None
+    fecha = panel['periodo']['fecha_desde'].value
+    fecha_serv_desde = fecha.strftime("%Y%m%d") if fecha else None
+    fecha = panel['periodo']['fecha_hasta'].value
+    fecha_serv_hasta = fecha.strftime("%Y%m%d") if fecha else None
     moneda_id = 'PES'; moneda_ctz = '1.000'
     obs_generales = panel['notebook']['obs']['generales'].value
     obs_comerciales = panel['notebook']['obs']['comerciales'].value
