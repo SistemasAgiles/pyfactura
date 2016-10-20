@@ -123,6 +123,16 @@ if 'py2exe' in sys.argv:
         ]
     data_files.append((".", pycard_resources))
 
+    try:
+        import designer     
+        kwargs['windows'] += [
+            Target(module=designer, script="designer.py", dest_base="designer"),
+            ]
+    except ImportError:
+        # el script pyfpdf/tools/designer.py no esta disponible:
+        print "IMPORTANTE: no se incluye el diseñador de plantillas PDF"
+
+
     # add certification authorities (newer versions of httplib2)
     try:
         import httplib2
