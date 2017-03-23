@@ -8,7 +8,7 @@ from __future__ import with_statement   # for python 2.5 compatibility
 __author__ = "Mariano Reingart (reingart@gmail.com)"
 __copyright__ = "Copyright (C) 2014- Mariano Reingart"
 __license__ = "GPL 3.0+"
-__version__ = "0.9g"
+__version__ = "0.9h"
 
 # Documentación: http://www.sistemasagiles.com.ar/trac/wiki/PyFactura
 
@@ -486,7 +486,9 @@ def crear_factura(comp, imprimir=True):
         if tipo_cbte not in (1, 2, 3, 4, 51, 52, 53, 54) and imprimir:
             if not iva_incluido:
                 precio += imp_iva / qty
-                subtotal += imp_iva
+        # siempre mostrar subtotal c/IVA (idem AFIP):
+        if imp_iva is not None and not iva_incluido and imprimir:
+            subtotal += imp_iva
         despacho = ""
         comp.AgregarDetalleItem(u_mtx, cod_mtx, codigo, ds, qty, umed, 
                 precio, bonif, iva_id, imp_iva, subtotal, despacho)
