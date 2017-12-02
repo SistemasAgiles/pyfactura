@@ -24,6 +24,7 @@ from ConfigParser import SafeConfigParser
 import gui          # import gui2py package (shortcuts)
 
 from pyafipws.padron import PadronAFIP
+from pyafipws.ws_sr_padron import WSSrPadronA4
 from pyafipws.sired import SIRED
 from pyafipws.wsaa import WSAA
 from pyafipws.wsfev1 import WSFEv1
@@ -65,8 +66,8 @@ def on_nro_doc_change(evt):
     doc_nro = ctrl.value
     tipo_doc = panel['cliente']['tipo_doc'].value
     cat_iva = None
+    doc_nro = doc_nro.replace("-", "") if doc_nro else 0
     if doc_nro:
-        doc_nro = doc_nro.replace("-", "")
         if padron.Buscar(doc_nro, tipo_doc):
             panel['cliente']['nombre'].value = padron.denominacion
             panel['cliente']['domicilio'].value = ""
@@ -75,14 +76,24 @@ def on_nro_doc_change(evt):
             except ValueError:
                 pass
             padron.ConsultarDomicilios(doc_nro, tipo_doc)
-            # tomar el primer domicilio o consultar con la API de AFIP:
+            # tomar el primer domicilio:
             for domicilio in padron.domicilios:
                 panel['cliente']['domicilio'].value = domicilio
                 break
-            else:
-                if doc_nro and padron.Consultar(doc_nro) and padron.domicilios:
-                    panel['cliente']['domicilio'].value = padron.domicilios[0]
-            panel['cliente']['email'].value = padron.email or ""
+        # si está disponible el webservice, consultar con AFIP y actualizar:
+        if padron_a4:
+            try:
+                padron_a4.Consultar(doc_nro)
+                panel['cliente']['nombre'].value = padron_a4.denominacion
+                if padron_a4.domicilios:
+                    panel['cliente']['domicilio'].value = padron_a4.domicilio
+                if padron_a4.cat_iva:
+                    cat_iva = int(padron_a4.cat_iva)
+            except Exception as ex:
+                ## gui.alert(unicode(ex), "Excepción consultando Padron AFIP")
+                # forzar selección de categoría por el usuario:
+                cat_iva = 5     # consumidor final?
+        panel['cliente']['email'].value = padron.email or ""
     else:
         panel['cliente']['nombre'].value = ""
         panel['cliente']['domicilio'].value = ""
@@ -242,9 +253,13 @@ def recuperar(tipo_cbte=None, punto_vta=None, cbte_desde=None, cbte_hasta=None):
                         factura["cat_iva"] = int(padron.cat_iva)
                     except ValueError:
                         pass
-                    if padron.Consultar(factura["nro_doc"]):
-                        if padron.domicilios:
-                            factura["domicilio_cliente"] = padron.domicilios[0]
+                    if padron_a4:
+                        try:
+                            padron_a4.Consultar(factura["nro_doc"])
+                            factura["nombre_cliente"] = padron_a4.denominacion
+                            factura["domicilio_cliente"] = padron_a4.domicilio
+                        except:
+                            pass
                     factura["email"] = padron.email or ""
 
                 # rearmar campos no informados en este Webservice:
@@ -1033,6 +1048,11 @@ if __name__ == "__main__":
         else:
             wsfexv1_url = None
 
+        if config.has_option('WS-SR-PADRON-A4','URL') and not HOMO:
+            ws_sr_padron_a4_url = config.get('WS-SR-PADRON-A4', 'URL')
+        else:
+            ws_sr_padron_a4_url = None
+
         DEFAULT_WEBSERVICE = "wsfev1"
         if config.has_section('PYRECE'):
             DEFAULT_WEBSERVICE = config.get('PYRECE','WEBSERVICE')
@@ -1060,6 +1080,17 @@ if __name__ == "__main__":
             wsfev1.SetTicketAcceso(ta)
         wsfev1.Cuit = cuit_emisor
         wsfev1.Conectar("cache", wsfev1_url)
+        # intento autenticar el servicio de padron, se usa si está disponible
+        ta = wsaa.Autenticar("ws_sr_padron_a4", cert, privatekey, wsaa_url, cache="cache")
+        if ta:
+            padron_a4 = WSSrPadronA4()
+            padron_a4.LanzarExcepciones = True
+            padron_a4.SetTicketAcceso(ta)
+            padron_a4.Cuit = cuit_emisor
+            padron_a4.Conectar("cache", ws_sr_padron_a4_url)
+        else:
+            padron_a4 = None
+
         fepdf = FEPDF()
         # cargo el formato CSV por defecto (factura.csv)
         fepdf.CargarFormato(conf_fact.get("formato", "factura.csv"))
@@ -1082,6 +1113,8 @@ if __name__ == "__main__":
         # agrego item de ejemplo:
         if '--prueba' in sys.argv:
             panel['cliente']['nro_doc'].value = "20-00000051-6"
+            if padron_a4:
+                on_nro_doc_change(None)
             panel['cliente']['cat_iva'].value = 1
             grilla.items.append({'qty': 1, 'codigo': '1111', 
             'ds': u"Honorarios  p/administración  de alquileres", 'precio': 1000., 
