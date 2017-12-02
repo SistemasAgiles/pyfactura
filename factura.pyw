@@ -8,7 +8,7 @@ from __future__ import with_statement   # for python 2.5 compatibility
 __author__ = "Mariano Reingart (reingart@gmail.com)"
 __copyright__ = "Copyright (C) 2014- Mariano Reingart"
 __license__ = "GPL 3.0+"
-__version__ = "0.9h"
+__version__ = "0.10a"
 
 # Documentación: http://www.sistemasagiles.com.ar/trac/wiki/PyFactura
 
@@ -183,6 +183,19 @@ def on_borrar_click(evt):
     if grilla.items:
         del grilla.items[-1]
 
+def on_agregar_tributo_click(evt):
+    base_imp = recalcular()
+    listado = panel['notebook']['tributos']['grilla']
+    listado.items.append({'tributo_id': 99, 'desc': '', 
+                          'alicuota': 0., 'base_imp': base_imp, })
+
+def on_borrar_tributo_click(evt):
+    listado = panel['notebook']['tributos']['grilla']
+    if listado .items:
+        del listado .items[-1]
+        recalcular()
+
+
 def recuperar(tipo_cbte=None, punto_vta=None, cbte_desde=None, cbte_hasta=None):
     "Consultar y rearmar comprobantes registrados en el Webservice de AFIP"
     title = __doc__
@@ -254,7 +267,7 @@ def on_consultas(evt):
         reload(consultas)
     consultas.main(callback=cargar_factura, recuperar_fn=recuperar)    
 
-def recalcular():
+def recalcular(evt=None):
     tipo_cbte = panel['tipo_cbte'].value
     neto_iva = {}
     imp_iva = {}
@@ -278,6 +291,13 @@ def recalcular():
                 iva_liq = neto_item * tasas_iva[iva_id] / 100.
                 imp_iva[iva_id] = imp_iva.get(iva_id, 0.) + iva_liq
                 it['imp_iva'] = iva_liq
+    imp_trib = 0.00
+    listado = panel['notebook']['tributos']['grilla']
+    for it in listado.items:
+        base_imp = it['base_imp'] or 0.00
+        alic = it['alic'] or 0.00
+        importe = it["importe"] = round(base_imp * alic / 100., 2)
+        imp_trib += importe
     listado = panel['notebook']['alicuotas_iva']['listado']
     listado.items.clear()
     for iva_id, iva_liq in imp_iva.items():
@@ -291,10 +311,14 @@ def recalcular():
     panel['notebook']['alicuotas_iva']['imp_tot_conc'].value = neto_iva.get(1, 0)
     panel['notebook']['alicuotas_iva']['imp_op_ex'].value = neto_iva.get(2, 0)
     panel['imp_iva'].value = sum(imp_iva.values(), 0.)
-    panel['imp_trib'].value = 0
+    panel['imp_trib'].value = imp_trib
     if not iva_incluido:
         total += sum(imp_iva.values(), 0.)
+    total += imp_trib
     panel['imp_total'].value = total 
+    # calcular subtotal general (neto sin IVA, incluyendo exento y no gravado):
+    subtotal_neto = sum([nt for iva_id, nt in neto_iva.items()])
+    return subtotal_neto
 
 def obtener_cae(evt):
     global id_factura
@@ -338,13 +362,14 @@ def obtener_cae(evt):
         nro = 1234
         wsfev1.AgregarCmpAsoc(tipo, pto_vta, nro)
 
-    if False:
-        id = 99
-        desc = 'Impuesto Municipal Matanza'
-        base_imp = 100
-        alic = 1
-        importe = 1
-        wsfev1.AgregarTributo(id, desc, base_imp, alic, importe)
+    listado = panel['notebook']['tributos']['grilla']
+    for it in listado.items:
+        tributo_id = it['tributo_id']
+        desc = it['desc'] or ""
+        base_imp = it['base_imp']
+        alic = it['alic']
+        importe = it['importe']
+        wsfev1.AgregarTributo(tributo_id, desc, base_imp, alic, importe)
 
     listado = panel['notebook']['alicuotas_iva']['listado']
     for it in listado.items:
@@ -455,12 +480,13 @@ def crear_factura(comp, imprimir=True):
         nro = 1234
         comp.AgregarCmpAsoc(tipo, pto_vta, nro)
 
-    if False:
-        tributo_id = 99
-        desc = 'Impuesto Municipal Matanza'
-        base_imp = "100.00"
-        alic = "1.00"
-        importe = "1.00"
+    listado = panel['notebook']['tributos']['grilla']
+    for it in listado.items:
+        tributo_id = it['tributo_id']
+        desc = it['desc'] or ""
+        base_imp = it['base_imp']
+        alic = it['alic']
+        importe = it['importe']
         comp.AgregarTributo(tributo_id, desc, base_imp, alic, importe)
 
     listado = panel['notebook']['alicuotas_iva']['listado']
@@ -634,6 +660,14 @@ def cargar_factura(f):
             if isinstance(v, decimal.Decimal):
                 it[k] = round(float(v), 2)
         grilla.items.append(it)
+
+    listado = panel['notebook']['tributos']['grilla']
+    listado.items.clear()
+    for it in f.get("tributos", []):
+        for k, v in it.items():
+            if isinstance(v, decimal.Decimal):
+                it[k] = round(float(v), 2)
+        listado.items.append(it)
 
     recalcular()
     habilitar(False)
@@ -848,14 +882,13 @@ with gui.Window(name='mywin', visible=False,
                               text=u'Otros tributos', ):
                 with gui.GridView(name='grilla', height='102', 
                                   left='12', top='18', width='606', item_count=0, 
+                                  ongridcellchanged=recalcular,
                                   sort_column=0, ):
-                    gui.GridColumn(name='tributo_id', text=u'id', width=25, 
-                                   type='number', )
-                    gui.GridColumn(name='impuesto', text=u'Impuesto', width=75,
+                    gui.GridColumn(name='tributo_id', text=u'Impuesto', 
                                    choices={1: "nacional", 2: "provincial", 
                                             3: "municipal", 4: "interno", 
                                             99: "otro"},
-                                   type='choice', )
+                                   type='choice', width=125, )
                     gui.GridColumn(name='desc', text=u'Descripci\xf3n', 
                                    width=200, type='text', )
                     gui.GridColumn(name='base_imp', text=u'Base Imp.', 
@@ -865,9 +898,11 @@ with gui.Window(name='mywin', visible=False,
                     gui.GridColumn(name='importe', text=u'Importe', width=125,
                                    type='double', format='15,2',)
                 gui.Button(label=u'Agregar', name='agregar', left='6', 
-                           top='127', width='85px', )
+                           top='127', width='85px', 
+                           onclick=on_agregar_tributo_click)
                 gui.Button(id=493, label=u'Borrar', name='borrar', 
-                           left='94', top='127', width='85px', )
+                           left='94', top='127', width='85px',
+                           onclick=on_borrar_tributo_click)
                 gui.Button(label=u'Modificar', name='modificar', left='183', 
                            top='128', width='85px', visible=False)
             with gui.TabPanel(name='obs', selected=False, 
@@ -949,11 +984,6 @@ mywin = gui.get("mywin")
 panel = mywin['panel']
 grilla = panel['notebook']['tab_art']['items']
 
-# agrego item de ejemplo:
-if '--prueba' in sys.argv:
-    grilla.items.append({'qty': 1, 'codigo': '1111', 
-    'ds': u"Honorarios  p/administración  de alquileres", 'precio': 1000., 
-    'iva_id': 5, 'subtotal': 1210.})
 
 if __name__ == "__main__":
     try:
@@ -1048,6 +1078,15 @@ if __name__ == "__main__":
                                     for k,v in config.items('ARTICULOS')])
         grilla.columns[2].choices = datos.articulos.values()
         limpiar(None)
+
+        # agrego item de ejemplo:
+        if '--prueba' in sys.argv:
+            panel['cliente']['nro_doc'].value = "20-00000051-6"
+            panel['cliente']['cat_iva'].value = 1
+            grilla.items.append({'qty': 1, 'codigo': '1111', 
+            'ds': u"Honorarios  p/administración  de alquileres", 'precio': 1000., 
+            'iva_id': 5, 'subtotal': 1210.})
+            recalcular()
 
         mywin.show()
         gui.main_loop()
