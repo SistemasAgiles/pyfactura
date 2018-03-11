@@ -8,7 +8,7 @@ from __future__ import with_statement   # for python 2.5 compatibility
 __author__ = "Mariano Reingart (reingart@gmail.com)"
 __copyright__ = "Copyright (C) 2014- Mariano Reingart"
 __license__ = "GPL 3.0+"
-__version__ = "0.10a"
+__version__ = "0.10b"
 
 # Documentación: http://www.sistemasagiles.com.ar/trac/wiki/PyFactura
 
@@ -300,7 +300,7 @@ def recalcular(evt=None):
             if not iva_incluido or tasas_iva[iva_id] is None:
                 neto_item = subtotal
             else:
-                neto_item = subtotal / (100. + tasas_iva[iva_id]) * 100.
+                neto_item = round(subtotal / (100. + tasas_iva[iva_id]) * 100., 2)
             neto_iva[iva_id] = neto_iva.get(iva_id, 0.) + neto_item
             if tasas_iva[iva_id] is not None and not tipo_cbte in datos.CLASE_C:
                 iva_liq = neto_item * tasas_iva[iva_id] / 100.
